@@ -1,0 +1,30 @@
+================================================================================
+LANDING PAGE OFICIAL — HABIT PARADIGM PRO v2.6
+Guía rápida para configurar tu enlace de pago y subir a internet en 30 segundos
+================================================================================
+
+ARCHIVOS INCLUIDOS EN ESTA CARPETA:
+1. index.html   -> Landing Page completa (Con Demo Interactiva, Audio Web, 
+                   Selector de 6 Acentos en vivo, Modo Oscuro/Claro y ES/EN).
+2. logo.jpg     -> Icono oficial de Habit Paradigm.
+3. robots.txt   -> Configuración SEO para buscadores.
+4. _redirects   -> Regla de enrutamiento para Netlify / Cloudflare Pages.
+
+--------------------------------------------------------------------------------
+PASO 1: CÓMO PONER TU ENLACE DE PAGO (HOTMART / GUMROAD / STRIPE)
+--------------------------------------------------------------------------------
+1. Abre el archivo "index.html" con cualquier editor de texto (Bloc de notas o VS Code).
+2. Busca la línea (alrededor de la línea 695):
+   const CHECKOUT_URL = '#licencia';
+3. Reemplaza '#licencia' por tu enlace de checkout real, por ejemplo:
+   const CHECKOUT_URL = 'https://pay.hotmart.com/TU_ENLACE';
+4. Guarda el archivo.
+
+--------------------------------------------------------------------------------
+PASO 2: CÓMO SUBIRLA GRATIS A INTERNET EN 30 SEGUNDOS (NETLIFY DROP)
+--------------------------------------------------------------------------------
+1. Entra a https://app.netlify.com/drop
+2. Arrastra toda esta carpeta ("habir paradig landingpage") dentro del recuadro.
+3. ¡Listo! Tendrás tu URL pública con certificado SSL (HTTPS) lista para recibir
+   tráfico de tus anuncios, Instagram o campañas.
+================================================================================
