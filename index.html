@@ -1,0 +1,2290 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habit Paradigm Pro v2.6 — El Sistema Operativo de Constancia Humana</title>
+  <meta name="description" content="Construye constancia real sin culpa ni sobrecarga. Micro-aplicación minimalista de hábitos con Modo Flex, Escudo de Recuperación Mensual y privacidad 100% Local-First. Pago único de por vida.">
+  <meta name="theme-color" content="#0B0F1C">
+
+  <!-- Open Graph / Social Meta -->
+  <meta property="og:title" content="Habit Paradigm Pro — Constancia Real Sin Fricción ni Culpa">
+  <meta property="og:description" content="Registra tus hábitos en 1 segundo. Basado en neurociencia conductual: Ley de 3 hábitos, descanso flexible sin perder tu racha y privacidad 100% local.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="logo.jpg">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+
+  <!-- Official Typography: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              obsidian: 'rgb(var(--brand-obsidian) / <alpha-value>)',
+              surface: 'rgb(var(--brand-surface) / <alpha-value>)',
+              elevated: 'rgb(var(--brand-elevated) / <alpha-value>)',
+              border: 'var(--brand-border)',
+              'border-subtle': 'var(--brand-border-subtle)',
+              mint: '#10B981',
+              'mint-glow': 'rgba(16, 185, 129, 0.25)',
+              sky: 'var(--brand-accent, #0EA5E9)',
+              'sky-glow': 'var(--brand-accent-glow, rgba(14, 165, 233, 0.35))',
+              violet: '#8B5CF6',
+              indigo: '#6366F1',
+              amber: '#F59E0B',
+              rose: '#F43F5E',
+              cyan: '#06B6D4',
+              slate: 'rgb(var(--brand-slate) / <alpha-value>)',
+              muted: 'rgb(var(--brand-muted) / <alpha-value>)',
+              silver: 'rgb(var(--brand-silver) / <alpha-value>)'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          boxShadow: {
+            'elevation-1': 'var(--elevation-1)',
+            'elevation-2': 'var(--elevation-2)',
+            'glow-sky': '0 0 24px -3px var(--brand-accent-glow, rgba(14, 165, 233, 0.38))',
+            'glow-mint': '0 0 24px -3px rgba(16, 185, 129, 0.38)',
+            'glow-amber': '0 0 24px -3px rgba(245, 158, 11, 0.35)',
+            'glow-violet': '0 0 24px -3px rgba(139, 92, 246, 0.35)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN (Cloudflare Primary + Unpkg Fallback) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.21/vue.global.prod.min.js"></script>
+  <script>
+    if (!window.Vue) {
+      document.write('<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"><\/script>');
+    }
+  </script>
+
+  <style>
+    [v-cloak] {
+      display: none !important;
+    }
+
+    /* ==========================================================================
+       DESIGN SYSTEM TOKENS (EXACT MATCH WITH HABIT PARADIGM v2.6 + EMIL MOTION)
+       ========================================================================== */
+    :root {
+      /* Light Mode Palette */
+      --brand-obsidian: 248 250 252;    /* #F8FAFC */
+      --brand-surface: 255 255 255;     /* #FFFFFF */
+      --brand-elevated: 241 245 249;    /* #F1F5F9 */
+      --brand-border: #CBD5E1;
+      --brand-border-subtle: #E2E8F0;
+      --brand-slate: 71 85 105;         /* #475569 - Contrast >= 4.5:1 */
+      --brand-muted: 51 65 85;          /* #334155 */
+      --brand-silver: 15 23 42;         /* #0F172A */
+      --brand-accent: #0EA5E9;
+      --brand-accent-glow: rgba(14, 165, 233, 0.35);
+      --elevation-1: 0 2px 8px -2px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04);
+      --elevation-2: 0 18px 38px -8px rgba(15, 23, 42, 0.1), 0 8px 16px -6px rgba(15, 23, 42, 0.05);
+
+      /* Emil Kowalski Motion Tokens */
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+      --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Vibrant Luxury Dark Mode (Deep Sapphire Obsidian with Jewel Tones) */
+    html.dark {
+      --brand-obsidian: 11 15 28;       /* #0B0F1C */
+      --brand-surface: 17 24 43;        /* #11182B */
+      --brand-elevated: 25 35 60;       /* #19233C */
+      --brand-border: rgba(148, 163, 184, 0.16);
+      --brand-border-subtle: rgba(148, 163, 184, 0.08);
+      --brand-slate: 142 166 200;       /* Accessible contrast on #0B0F1C & #11182B */
+      --brand-muted: 182 200 226;
+      --brand-silver: 248 250 255;
+      --elevation-1: 0 4px 20px -2px rgba(0, 0, 0, 0.45), 0 2px 6px -1px rgba(14, 165, 233, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+      --elevation-2: 0 16px 40px -6px rgba(0, 0, 0, 0.65), 0 6px 18px -2px rgba(99, 102, 241, 0.16), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background-attachment: fixed;
+      transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+    }
+
+    /* Headings balanced wrapping */
+    h1, h2, h3, .balance-text {
+      text-wrap: balance;
+    }
+
+    /* ==========================================================================
+       EMIL KOWALSKI MOTION ARCHITECTURE (NO transition:all, GPU-ONLY PROPERTIES)
+       ========================================================================== */
+    .spring-tactile {
+      transition:
+        transform 160ms var(--ease-out),
+        box-shadow 160ms var(--ease-out),
+        background-color 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease,
+        opacity 160ms var(--ease-out);
+    }
+
+    .spring-tactile:active {
+      transform: scale(0.97);
+    }
+
+    /* Hover lift gated strictly to fine pointer devices */
+    @media (hover: hover) and (pointer: fine) {
+      .hover-lift {
+        transition:
+          transform 220ms var(--ease-out),
+          box-shadow 220ms var(--ease-out),
+          border-color 220ms ease;
+      }
+      .hover-lift:hover {
+        transform: translateY(-3px);
+      }
+      .spring-tactile-hover:hover {
+        transform: translateY(-1px);
+      }
+      .spring-tactile-hover:active {
+        transform: scale(0.97);
+      }
+    }
+
+    /* Ambient Aurora Floating Orbs */
+    @keyframes orbFloatA {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(55px, -35px) scale(1.12); }
+      66% { transform: translate(-35px, 28px) scale(0.92); }
+    }
+    @keyframes orbFloatB {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(-45px, 40px) scale(1.08); }
+      66% { transform: translate(40px, -30px) scale(0.95); }
+    }
+    @keyframes orbFloatC {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(30px, -25px) scale(1.1); }
+    }
+    .aurora-orb-1 { animation: orbFloatA 18s ease-in-out infinite; }
+    .aurora-orb-2 { animation: orbFloatB 22s ease-in-out infinite; }
+    .aurora-orb-3 { animation: orbFloatC 20s ease-in-out infinite; }
+
+    /* Subtle Beacon Pulse */
+    @keyframes subtleBeacon {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.18); opacity: 0.55; }
+    }
+    .beacon-pulse {
+      animation: subtleBeacon 2.8s infinite var(--ease-in-out);
+    }
+
+    /* Check-in Success Pop (Never starts from scale(0)) */
+    @keyframes checkPop {
+      0% { transform: scale(0.95); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+    .check-pop-anim {
+      animation: checkPop 240ms var(--ease-out);
+    }
+
+    /* Scroll Reveal (Fires once via IntersectionObserver) */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(14px) scale(0.985);
+      transition:
+        opacity 450ms var(--ease-out),
+        transform 450ms var(--ease-out);
+    }
+    .reveal-section.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Stagger delays for child cards */
+    .stagger-1 { transition-delay: 40ms; }
+    .stagger-2 { transition-delay: 90ms; }
+    .stagger-3 { transition-delay: 140ms; }
+
+    /* Modal / Toast entry transitions */
+    .modal-surface {
+      transform-origin: center;
+      transition:
+        opacity 220ms var(--ease-out),
+        transform 220ms var(--ease-out);
+    }
+
+    /* Subtle Architectural Grid Overlay */
+    .bg-grid-pattern {
+      background-size: 36px 36px;
+      background-image: 
+        linear-gradient(to right, rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.045) 1px, transparent 1px);
+    }
+
+    /* Reduced Motion Accessibility Gate */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal-section {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: opacity 150ms ease !important;
+      }
+      .hover-lift:hover, .spring-tactile:active {
+        transform: none !important;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.45);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-brand-sky selection:text-white bg-brand-obsidian text-brand-silver">
+
+  <!-- Skip to Main Content for Keyboard Accessibility -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-brand-sky focus:text-white focus:font-bold focus:text-xs">
+    Saltar al contenido principal
+  </a>
+
+  <div id="app" class="min-h-screen flex flex-col justify-between relative overflow-hidden bg-grid-pattern" v-cloak>
+
+    <!-- =====================================================================
+         AMBIENT AURORA FLOATING GLOW BACKGROUND (MATCHES APP EXACTLY)
+         ===================================================================== -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
+      <div class="absolute -top-36 -left-32 w-[26rem] h-[26rem] rounded-full bg-violet-600/15 dark:bg-violet-600/20 blur-[110px] aurora-orb-1"></div>
+      <div class="absolute top-1/4 -right-36 w-[30rem] h-[30rem] rounded-full bg-sky-500/15 dark:bg-sky-500/20 blur-[125px] aurora-orb-2"></div>
+      <div class="absolute -bottom-36 left-1/4 w-[28rem] h-[28rem] rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-[115px] aurora-orb-3"></div>
+      <div class="absolute top-2/3 left-2/3 w-80 h-80 rounded-full bg-amber-500/10 dark:bg-amber-500/12 blur-[105px] aurora-orb-1"></div>
+    </div>
+
+    <!-- =====================================================================
+         TOP STICKY GLASSMORPHIC NAVIGATION BAR
+         ===================================================================== -->
+    <header class="sticky top-0 z-40 bg-white/85 dark:bg-brand-obsidian/90 backdrop-blur-xl border-b border-brand-border transition-colors">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+        
+        <!-- Brand Logo & Identity -->
+        <a href="#" class="flex items-center space-x-2.5 min-w-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky rounded-xl">
+          <div class="relative w-9 h-9 rounded-xl overflow-hidden shadow-elevation-1 border border-brand-border bg-brand-surface flex items-center justify-center p-0.5 flex-shrink-0">
+            <img src="logo.jpg" alt="Habit Paradigm Logo" width="36" height="36" class="w-full h-full object-cover rounded-lg transition-transform duration-200 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')">
+            <svg class="w-5 h-5 hidden text-brand-sky" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center space-x-1.5">
+              <span class="text-sm sm:text-base font-extrabold tracking-tight text-brand-silver truncate">Habit Paradigm</span>
+              <span class="text-[10px] font-mono tracking-wider px-1.5 py-0.5 rounded border border-brand-border text-brand-sky bg-brand-sky/10 font-bold flex-shrink-0">
+                PRO v2.6
+              </span>
+            </div>
+            <p class="text-[10px] font-mono text-brand-slate tracking-tight hidden sm:block truncate">
+              {{ t('nav_subtitle') }}
+            </p>
+          </div>
+        </a>
+
+        <!-- Desktop Anchor Navigation -->
+        <nav class="hidden lg:flex items-center space-x-1" aria-label="Navegación principal">
+          <a href="#problema" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-brand-muted hover:text-brand-silver hover:bg-brand-elevated/60 spring-tactile focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky">
+            {{ t('nav_problem') }}
+          </a>
+          <a href="#demo-interactiva" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-brand-muted hover:text-brand-silver hover:bg-brand-elevated/60 spring-tactile flex items-center space-x-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-mint beacon-pulse"></span>
+            <span>{{ t('nav_demo') }}</span>
+          </a>
+          <a href="#pilares" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-brand-muted hover:text-brand-silver hover:bg-brand-elevated/60 spring-tactile focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky">
+            {{ t('nav_pillars') }}
+          </a>
+          <a href="#arquitectura" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-brand-muted hover:text-brand-silver hover:bg-brand-elevated/60 spring-tactile focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky">
+            {{ t('nav_privacy') }}
+          </a>
+          <a href="#comparativa" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-brand-muted hover:text-brand-silver hover:bg-brand-elevated/60 spring-tactile focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky">
+            {{ t('nav_compare') }}
+          </a>
+          <a href="#faq" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-brand-muted hover:text-brand-silver hover:bg-brand-elevated/60 spring-tactile focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky">
+            FAQ
+          </a>
+        </nav>
+
+        <!-- Interactive System Controls (Accent, Audio, Lang, Theme, Primary CTA) -->
+        <div class="flex items-center space-x-2 flex-shrink-0">
+
+          <!-- Live Accent Color Dots (Desktop) -->
+          <div class="hidden xl:flex items-center space-x-1 px-2 py-1 rounded-lg border border-brand-border bg-brand-surface" role="group" :aria-label="t('accent_selector_label')">
+            <button
+              v-for="acc in availableAccents"
+              :key="acc.id"
+              type="button"
+              @click="applyAccentColor(acc.id)"
+              :title="acc.name"
+              :aria-label="'Color ' + acc.name"
+              class="w-3.5 h-3.5 rounded-full spring-tactile cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              :class="[acc.bgClass, activeAccent === acc.id ? 'ring-2 ring-brand-silver scale-110' : 'opacity-60 hover:opacity-100']"
+            ></button>
+          </div>
+
+          <!-- Acoustic Synthesis Toggle -->
+          <button
+            type="button"
+            @click="toggleSound"
+            :title="soundEnabled ? t('audio_on') : t('audio_off')"
+            :aria-label="soundEnabled ? t('audio_on') : t('audio_off')"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border border-brand-border bg-brand-surface text-brand-muted hover:text-brand-silver hover:bg-brand-elevated spring-tactile cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky"
+          >
+            <svg v-if="soundEnabled" class="w-4 h-4 text-brand-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+            <svg v-else class="w-4 h-4 text-brand-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          </button>
+
+          <!-- Language Switcher (ES / EN) -->
+          <button
+            type="button"
+            @click="toggleLanguage"
+            :title="lang === 'es' ? 'Switch to English' : 'Cambiar a Español'"
+            aria-label="Cambiar idioma / Switch language"
+            class="h-8 px-2.5 flex items-center space-x-1 rounded-lg border border-brand-border bg-brand-surface text-brand-silver hover:bg-brand-elevated text-xs font-mono font-bold spring-tactile cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky"
+          >
+            <span>{{ lang === 'es' ? 'ES' : 'EN' }}</span>
+          </button>
+
+          <!-- Theme Switcher (Dark / Light) -->
+          <button
+            type="button"
+            @click="toggleTheme"
+            :title="isDarkMode ? t('theme_light') : t('theme_dark')"
+            :aria-label="isDarkMode ? t('theme_light') : t('theme_dark')"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border border-brand-border bg-brand-surface text-brand-muted hover:text-brand-silver hover:bg-brand-elevated spring-tactile cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky"
+          >
+            <svg v-if="isDarkMode" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg v-else class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+
+          <!-- Primary Navbar CTA -->
+          <a
+            href="#licencia"
+            class="px-3.5 py-2 rounded-xl bg-brand-sky text-white font-bold text-xs shadow-glow-sky hover:opacity-95 spring-tactile inline-flex items-center space-x-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky"
+          >
+            <span>{{ t('nav_cta') }}</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        </div>
+
+      </div>
+      <!-- Signature Luxury Hairline Accent from Habit Paradigm App -->
+      <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-brand-sky/35 to-transparent"></div>
+    </header>
+
+    <!-- =====================================================================
+         MAIN LANDING CONTENT
+         ===================================================================== -->
+    <main id="main-content" class="flex-grow relative z-10">
+
+      <!-- ===================================================================
+           1. HERO SECTION + INTERACTIVE PRODUCT SANDBOX
+           =================================================================== -->
+      <section class="pt-10 sm:pt-16 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        
+        <!-- Top Centered Hero Copy -->
+        <div class="max-w-3xl mx-auto text-center space-y-6">
+          
+          <!-- System Status Pill -->
+          <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-brand-surface border border-brand-border shadow-elevation-1">
+            <span class="w-2 h-2 rounded-full bg-brand-mint beacon-pulse"></span>
+            <span class="text-[11px] font-mono uppercase tracking-wider font-bold text-brand-silver">
+              {{ t('hero_badge') }}
+            </span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-brand-sky/15 text-brand-sky font-bold">
+              v2.6 PRO
+            </span>
+          </div>
+
+          <!-- Hero Main Title -->
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-brand-silver leading-[1.1]">
+            {{ t('hero_title_1') }}
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-sky via-emerald-400 to-brand-sky">
+              {{ t('hero_title_highlight') }}
+            </span>
+          </h1>
+
+          <!-- Hero Subtitle -->
+          <p class="text-base sm:text-lg text-brand-muted leading-relaxed max-w-2xl mx-auto">
+            {{ t('hero_subtitle') }}
+          </p>
+
+          <!-- Primary & Secondary CTA Buttons -->
+          <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5">
+            <a
+              href="#licencia"
+              @click="playTapSound"
+              class="px-7 py-4 rounded-2xl bg-brand-sky text-white font-extrabold text-sm sm:text-base shadow-glow-sky hover:opacity-95 spring-tactile inline-flex items-center justify-center space-x-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky"
+            >
+              <span>{{ t('hero_cta_primary') }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </a>
+
+            <a
+              href="#demo-interactiva"
+              @click="playTapSound"
+              class="px-6 py-4 rounded-2xl bg-brand-surface hover:bg-brand-elevated text-brand-silver border border-brand-border font-bold text-sm sm:text-base shadow-elevation-1 spring-tactile inline-flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky"
+            >
+              <span class="w-2 h-2 rounded-full bg-brand-mint beacon-pulse"></span>
+              <span>{{ t('hero_cta_secondary') }}</span>
+            </a>
+          </div>
+
+          <!-- Trust Micro-Specifications Bar -->
+          <div class="pt-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-mono text-brand-slate">
+            <div class="flex items-center space-x-1.5">
+              <svg class="w-4 h-4 text-brand-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>{{ t('hero_trust_1') }}</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <svg class="w-4 h-4 text-brand-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <span>{{ t('hero_trust_2') }}</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <span>{{ t('hero_trust_3') }}</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- =================================================================
+             LIVE INTERACTIVE SANDBOX SHOWCASE ("TOUCH THE PRODUCT")
+             ================================================================= -->
+        <div id="demo-interactiva" class="mt-12 sm:mt-16 scroll-mt-20">
+          
+          <!-- Interactive Helper Banner above the App Frame -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-2 mb-3 px-2">
+            <div class="flex items-center space-x-2 text-xs font-mono text-brand-sky">
+              <span class="inline-flex items-center px-2 py-0.5 rounded bg-brand-sky/15 border border-brand-sky/30 font-bold">
+                {{ t('sandbox_live_tag') }}
+              </span>
+              <span class="text-brand-muted">{{ t('sandbox_instruction') }}</span>
+            </div>
+
+            <!-- Accent Color Picker Bar for Mobile/Tablet & Desktop -->
+            <div class="flex items-center space-x-2 text-xs font-mono">
+              <span class="text-brand-slate text-[11px]">{{ t('sandbox_accent_label') }}:</span>
+              <div class="flex items-center space-x-1.5 bg-brand-surface px-2.5 py-1 rounded-lg border border-brand-border">
+                <button
+                  v-for="acc in availableAccents"
+                  :key="'demo-acc-' + acc.id"
+                  type="button"
+                  @click="applyAccentColor(acc.id)"
+                  :title="acc.name"
+                  class="w-3.5 h-3.5 rounded-full spring-tactile cursor-pointer"
+                  :class="[acc.bgClass, activeAccent === acc.id ? 'ring-2 ring-brand-silver scale-110' : 'opacity-55 hover:opacity-100']"
+                ></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- App Window Frame (Exact Replica of Habit Paradigm v2.6 UI) -->
+          <div class="rounded-3xl bg-brand-surface border border-brand-border shadow-elevation-2 overflow-hidden">
+            
+            <!-- Window Top Chrome Bar -->
+            <div class="bg-brand-obsidian/80 border-b border-brand-border px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-1.5" aria-hidden="true">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500/70"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500/70"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/70"></span>
+                </div>
+                <div class="h-4 w-[1px] bg-brand-border"></div>
+                <div class="flex items-center space-x-2">
+                  <img src="logo.jpg" alt="" class="w-5 h-5 rounded-md object-cover">
+                  <span class="text-xs font-bold text-brand-silver">Habit Paradigm</span>
+                  <span class="text-[9px] font-mono px-1.5 py-0.2 rounded border border-brand-border text-brand-sky bg-brand-sky/10 font-bold">PRO</span>
+                </div>
+              </div>
+
+              <!-- Interactive Demo View Switcher Tabs -->
+              <div class="flex items-center space-x-1 bg-brand-elevated p-1 rounded-xl border border-brand-border" role="tablist">
+                <button
+                  type="button"
+                  role="tab"
+                  :aria-selected="demoTab === 'habits'"
+                  @click="switchDemoTab('habits')"
+                  class="px-3 py-1.5 rounded-lg text-xs font-semibold spring-tactile cursor-pointer flex items-center space-x-1.5"
+                  :class="demoTab === 'habits' ? 'bg-brand-surface text-brand-sky shadow-sm border border-brand-border' : 'text-brand-muted hover:text-brand-silver'"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                  <span>{{ t('demo_tab_habits') }}</span>
+                </button>
+
+                <button
+                  type="button"
+                  role="tab"
+                  :aria-selected="demoTab === 'analytics'"
+                  @click="switchDemoTab('analytics')"
+                  class="px-3 py-1.5 rounded-lg text-xs font-semibold spring-tactile cursor-pointer flex items-center space-x-1.5"
+                  :class="demoTab === 'analytics' ? 'bg-brand-surface text-brand-sky shadow-sm border border-brand-border' : 'text-brand-muted hover:text-brand-silver'"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                  <span>{{ t('demo_tab_analytics') }}</span>
+                </button>
+
+                <button
+                  type="button"
+                  role="tab"
+                  :aria-selected="demoTab === 'widget'"
+                  @click="switchDemoTab('widget')"
+                  class="px-3 py-1.5 rounded-lg text-xs font-semibold spring-tactile cursor-pointer flex items-center space-x-1.5"
+                  :class="demoTab === 'widget' ? 'bg-brand-surface text-brand-sky shadow-sm border border-brand-border' : 'text-brand-muted hover:text-brand-silver'"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                  </svg>
+                  <span>{{ t('demo_tab_widget') }}</span>
+                </button>
+              </div>
+
+              <!-- Sandbox Status Pill -->
+              <div class="hidden md:flex items-center space-x-2 text-[11px] font-mono text-brand-slate">
+                <span class="w-2 h-2 rounded-full bg-brand-mint"></span>
+                <span>LOCAL-FIRST SANDBOX</span>
+              </div>
+            </div>
+
+            <!-- Window Body (12-Column Dashboard Grid like the Real App) -->
+            <div class="p-4 sm:p-6 lg:p-8 bg-brand-obsidian/55">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                <!-- LEFT MAIN COLUMN (8 Cols) -->
+                <div class="lg:col-span-8 space-y-4">
+
+                  <!-- TAB 1: TODAY'S HABIT EXECUTION -->
+                  <div v-if="demoTab === 'habits'" class="space-y-4">
+                    
+                    <!-- Execution Velocity Progress Bar -->
+                    <div class="bg-brand-surface rounded-2xl p-4 border border-brand-border shadow-elevation-1 space-y-2.5">
+                      <div class="flex items-center justify-between text-xs font-mono">
+                        <span class="text-brand-muted uppercase tracking-wider text-[11px]">{{ t('demo_velocity_label') }}</span>
+                        <span class="text-brand-silver font-bold">
+                          {{ demoCompletedCount }} / {{ demoHabits.length }} {{ t('demo_completed_word') }} ({{ demoCompletionPct }}%)
+                        </span>
+                      </div>
+                      <div class="w-full h-2.5 bg-brand-obsidian rounded-full overflow-hidden p-0.5 border border-brand-border">
+                        <div
+                          class="h-full rounded-full bg-gradient-to-r from-brand-mint to-brand-sky"
+                          style="transition: width 300ms var(--ease-out);"
+                          :style="{ width: demoCompletionPct + '%' }"
+                        ></div>
+                      </div>
+                    </div>
+
+                    <!-- Active Habits Header & Capacity Toggle -->
+                    <div class="flex items-center justify-between px-1">
+                      <div class="flex items-center space-x-2">
+                        <h2 class="text-xs uppercase font-mono font-bold tracking-wider text-brand-slate">
+                          {{ t('demo_active_protocols') }}
+                        </h2>
+                        <span class="text-[11px] font-mono text-brand-sky px-2 py-0.5 rounded border border-brand-border bg-brand-surface font-bold">
+                          {{ demoHabits.length }}/{{ demoUnlimited ? '∞' : '3' }}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        @click="toggleDemoUnlimited"
+                        class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold border border-brand-border bg-brand-surface hover:border-brand-sky text-brand-muted hover:text-brand-silver spring-tactile cursor-pointer"
+                      >
+                        {{ demoUnlimited ? t('demo_cap_unlimited') : t('demo_cap_strict') }}
+                      </button>
+                    </div>
+
+                    <!-- Interactive Habit Cards List -->
+                    <div class="space-y-3">
+                      <div
+                        v-for="habit in demoHabits"
+                        :key="habit.id"
+                        class="bg-brand-surface rounded-2xl p-4 sm:p-5 border shadow-elevation-1 space-y-4"
+                        style="transition: border-color 200ms ease, box-shadow 200ms var(--ease-out);"
+                        :class="[
+                          habit.doneToday ? 'border-brand-mint/60 ring-1 ring-brand-mint/30' : (habit.shieldedToday ? 'border-brand-sky/60 ring-1 ring-brand-sky/30' : 'border-brand-border'),
+                          celebratingId === habit.id ? 'check-pop-anim' : ''
+                        ]"
+                      >
+                        <div class="flex items-start justify-between gap-3">
+                          <div class="flex items-start space-x-3.5">
+                            <!-- Icon Box -->
+                            <div
+                              class="w-11 h-11 rounded-xl flex items-center justify-center border border-brand-border shadow-elevation-1 flex-shrink-0 text-lg select-none"
+                              :style="{ backgroundColor: habit.colorBg }"
+                            >
+                              <span>{{ habit.emoji }}</span>
+                            </div>
+
+                            <div>
+                              <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                                <h3 class="font-bold text-sm sm:text-base text-brand-silver tracking-tight">
+                                  {{ lang === 'es' ? habit.titleEs : habit.titleEn }}
+                                </h3>
+                                <span
+                                  v-if="habit.mode === 'flex'"
+                                  class="px-2 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase border border-emerald-500/30 text-emerald-400 bg-emerald-500/10 font-semibold"
+                                >
+                                  FLEX {{ habit.flexDone + (habit.doneToday ? 1 : 0) }}/{{ habit.flexTarget }}d
+                                </span>
+                                <span
+                                  v-else
+                                  class="px-2 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase border border-brand-border text-brand-slate bg-brand-elevated font-semibold"
+                                >
+                                  DAILY 7/7
+                                </span>
+                              </div>
+
+                              <!-- Streak & Status -->
+                              <div class="flex items-center space-x-3 text-xs mt-1 font-mono">
+                                <div class="flex items-center space-x-1 text-amber-400 font-semibold">
+                                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                                  </svg>
+                                  <span>{{ habit.baseStreak + (habit.doneToday || habit.shieldedToday ? 1 : 0) }} {{ t('days_word') }}</span>
+                                </div>
+
+                                <span v-if="habit.shieldedToday" class="text-brand-sky font-semibold">
+                                  • 🛡️ {{ t('shielded_status') }}
+                                </span>
+                                <span v-else-if="habit.mode === 'flex'" class="text-emerald-400/90 hidden sm:inline">
+                                  • {{ 7 - habit.flexTarget }} {{ t('free_rest_days') }}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Shield Trigger Button -->
+                          <button
+                            type="button"
+                            @click="toggleDemoShield(habit)"
+                            :disabled="habit.doneToday"
+                            :title="t('demo_shield_tooltip')"
+                            class="px-2.5 py-1.5 rounded-lg border text-xs font-mono flex items-center space-x-1 spring-tactile cursor-pointer"
+                            :class="habit.shieldedToday
+                              ? 'border-brand-sky bg-brand-sky/20 text-brand-sky font-bold'
+                              : (habit.doneToday ? 'opacity-30 cursor-not-allowed border-brand-border text-brand-slate' : 'border-brand-border bg-brand-elevated text-brand-muted hover:text-brand-sky hover:border-brand-sky/50')"
+                          >
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            <span class="hidden sm:inline">{{ habit.shieldedToday ? t('shield_active_btn') : t('shield_use_btn') }}</span>
+                          </button>
+                        </div>
+
+                        <!-- Bottom Strip: 7-Day Matrix + One-Tap Execute Button -->
+                        <div class="pt-3 border-t border-brand-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                          
+                          <!-- 7-Day Mini Matrix -->
+                          <div class="flex items-center space-x-1.5 self-center sm:self-auto">
+                            <div
+                              v-for="(st, idx) in habit.weekHistory"
+                              :key="habit.id + '-d-' + idx"
+                              class="flex flex-col items-center"
+                            >
+                              <span class="text-[9px] font-mono text-brand-slate mb-1">{{ weekLabels[idx] }}</span>
+                              <div
+                                class="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-mono font-bold transition-colors"
+                                :class="getDemoMatrixClass(habit, st, idx === 6)"
+                              >
+                                <svg v-if="(idx === 6 && habit.doneToday) || (idx < 6 && st === 'done')" class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span v-else-if="(idx === 6 && habit.shieldedToday) || (idx < 6 && st === 'shield')" class="text-[10px] text-white">🛡️</span>
+                                <span v-else-if="st === 'rest'" class="text-brand-slate">·</span>
+                                <span v-else class="text-brand-slate/50">○</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Hero One-Tap Execution Button -->
+                          <button
+                            type="button"
+                            @click="toggleDemoHabit(habit)"
+                            class="sm:min-w-[180px] py-2.5 px-5 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 spring-tactile cursor-pointer"
+                            :class="habit.doneToday
+                              ? 'bg-brand-mint text-white shadow-glow-mint hover:bg-emerald-600'
+                              : (habit.shieldedToday
+                                  ? 'bg-brand-sky text-white shadow-glow-sky'
+                                  : 'bg-brand-elevated text-brand-silver border border-brand-border hover:border-brand-sky')"
+                          >
+                            <template v-if="habit.doneToday">
+                              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span>{{ t('btn_executed') }}</span>
+                              <span class="text-[10px] font-mono opacity-75">({{ t('undo_word') }})</span>
+                            </template>
+                            <template v-else-if="habit.shieldedToday">
+                              <span>🛡️ {{ t('btn_shielded') }}</span>
+                            </template>
+                            <template v-else>
+                              <span class="w-2 h-2 rounded-full bg-brand-sky beacon-pulse"></span>
+                              <span>{{ t('btn_execute_now') }}</span>
+                            </template>
+                          </button>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- TAB 2: ANALYTICS & RINGS PREVIEW -->
+                  <div v-else-if="demoTab === 'analytics'" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div
+                        v-for="habit in demoHabits"
+                        :key="'ring-' + habit.id"
+                        class="bg-brand-surface rounded-2xl p-4 border border-brand-border flex flex-col items-center text-center space-y-2"
+                      >
+                        <div class="relative w-20 h-20 flex items-center justify-center">
+                          <svg class="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
+                            <path class="text-brand-elevated" stroke="currentColor" stroke-width="3.2" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path :class="habit.doneToday ? 'text-brand-mint' : 'text-brand-sky'" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" fill="none" :stroke-dasharray="(habit.doneToday ? 96 : 84) + ', 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                          </svg>
+                          <span class="absolute text-sm font-mono font-bold text-brand-silver">{{ habit.doneToday ? '96%' : '84%' }}</span>
+                        </div>
+                        <div class="font-bold text-xs text-brand-silver">{{ lang === 'es' ? habit.titleEs : habit.titleEn }}</div>
+                        <div class="text-[10px] font-mono text-amber-400">🔥 {{ habit.baseStreak + (habit.doneToday ? 1 : 0) }} {{ t('days_word') }}</div>
+                      </div>
+                    </div>
+
+                    <!-- 14-Day Velocity Sparkbars -->
+                    <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border space-y-3">
+                      <div class="flex items-center justify-between">
+                        <div>
+                          <h3 class="text-xs font-mono uppercase font-bold text-brand-silver">{{ t('analytics_spark_title') }}</h3>
+                          <p class="text-[11px] text-brand-slate">{{ t('analytics_spark_desc') }}</p>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-brand-mint">+92.4% Adherence</span>
+                      </div>
+                      <div class="h-28 flex items-end space-x-2 pt-4">
+                        <div
+                          v-for="(val, i) in [66, 100, 100, 66, 100, 100, 100, 66, 100, 100, 100, 66, 100, Math.max(35, demoCompletionPct)]"
+                          :key="'bar-' + i"
+                          class="flex-1 flex flex-col items-center space-y-1"
+                        >
+                          <div
+                            class="w-full rounded-t-md transition-all duration-300"
+                            :class="i === 13 ? 'bg-brand-mint shadow-glow-mint' : 'bg-brand-sky/60 hover:bg-brand-sky'"
+                            :style="{ height: (val * 0.8) + 'px' }"
+                          ></div>
+                          <span class="text-[9px] font-mono text-brand-slate">{{ i + 1 }}d</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- TAB 3: INTERACTIVE MOBILE WIDGET SIMULATOR -->
+                  <div v-else-if="demoTab === 'widget'" class="bg-brand-surface rounded-2xl p-6 border border-brand-border flex flex-col items-center space-y-4">
+                    <div class="text-center space-y-1">
+                      <span class="text-[10px] font-mono uppercase tracking-wider text-brand-sky font-bold">PWA Homescreen Experience</span>
+                      <h3 class="text-base font-bold text-brand-silver">{{ t('widget_sim_heading') }}</h3>
+                    </div>
+
+                    <div class="w-full max-w-sm bg-[#060A14] p-5 rounded-3xl border border-slate-800 shadow-2xl space-y-3">
+                      <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 px-1">
+                        <span>9:41</span>
+                        <span>Habit Paradigm OS • Offline Ready</span>
+                      </div>
+                      <div class="bg-brand-surface/95 rounded-2xl p-4 border border-brand-border space-y-2.5">
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center space-x-2">
+                            <img src="logo.jpg" alt="" class="w-4 h-4 rounded object-cover">
+                            <span class="text-xs font-bold font-mono text-brand-silver">Habit Paradigm</span>
+                          </div>
+                          <span class="text-[10px] font-mono text-brand-mint font-bold">{{ demoCompletedCount }}/{{ demoHabits.length }} Hoy</span>
+                        </div>
+
+                        <div
+                          v-for="h in demoHabits"
+                          :key="'w-sim-' + h.id"
+                          @click="toggleDemoHabit(h)"
+                          class="flex items-center justify-between p-2.5 rounded-xl border cursor-pointer spring-tactile"
+                          :class="h.doneToday ? 'bg-emerald-950/40 border-brand-mint/50 text-brand-silver' : 'bg-brand-elevated border-brand-border text-brand-muted'"
+                        >
+                          <div class="flex items-center space-x-2 truncate">
+                            <span class="text-sm">{{ h.emoji }}</span>
+                            <span class="text-xs font-semibold truncate">{{ lang === 'es' ? h.titleEs : h.titleEn }}</span>
+                          </div>
+                          <div
+                            class="w-5 h-5 rounded-md flex items-center justify-center border"
+                            :class="h.doneToday ? 'bg-brand-mint border-brand-mint text-white' : 'border-slate-600'"
+                          >
+                            <svg v-if="h.doneToday" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- RIGHT TELEMETRY SIDEBAR (4 Cols - Exact Match with Habit Paradigm Desktop Sidebar) -->
+                <aside class="lg:col-span-4 space-y-4">
+                  
+                  <!-- Streak & Momentum Card -->
+                  <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border shadow-elevation-1 space-y-4">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[11px] font-mono uppercase tracking-wider text-brand-slate font-bold">
+                        {{ t('sidebar_momentum') }}
+                      </span>
+                      <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold">
+                        🔥 {{ 21 + (demoCompletedCount === demoHabits.length ? 1 : 0) }} {{ t('days_word') }}
+                      </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                      <div class="p-3 rounded-xl bg-brand-elevated border border-brand-border">
+                        <div class="text-[10px] font-mono text-brand-slate">{{ t('sidebar_adherence') }}</div>
+                        <div class="text-lg font-mono font-extrabold text-brand-silver mt-0.5">
+                          {{ 88 + demoCompletedCount * 4 }}%
+                        </div>
+                      </div>
+                      <div class="p-3 rounded-xl bg-brand-elevated border border-brand-border">
+                        <div class="text-[10px] font-mono text-brand-slate">{{ t('sidebar_shield_label') }}</div>
+                        <div class="text-lg font-mono font-extrabold text-brand-sky mt-0.5">
+                          {{ demoShieldUsed ? '0 / 1' : '1 / 1' }} 🛡️
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 28-Day Consistency Heatmap Grid -->
+                    <div class="space-y-2 pt-1">
+                      <div class="flex items-center justify-between text-[10px] font-mono text-brand-slate">
+                        <span>{{ t('sidebar_matrix_28d') }}</span>
+                        <span class="text-brand-mint">4 Semanas</span>
+                      </div>
+                      <div class="grid grid-cols-7 gap-1.5">
+                        <div
+                          v-for="(cell, cIdx) in demoHeatmap28"
+                          :key="'hm-' + cIdx"
+                          class="h-5 rounded-md flex items-center justify-center text-[9px] font-mono transition-colors"
+                          :class="cIdx === 27
+                            ? (demoCompletedCount > 0 ? 'bg-brand-mint text-white font-bold shadow-glow-mint' : 'bg-brand-elevated border border-brand-sky text-brand-sky')
+                            : (cell === 'done' ? 'bg-brand-mint/80 text-white' : (cell === 'shield' ? 'bg-brand-sky/80 text-white' : 'bg-brand-elevated text-brand-slate'))"
+                        >
+                          <span v-if="cIdx === 27">Hoy</span>
+                          <span v-else-if="cell === 'shield'">🛡️</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Local-First Telemetry Note -->
+                  <div class="bg-brand-surface rounded-2xl p-4 border border-brand-border shadow-elevation-1 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-brand-sky/15 border border-brand-sky/30 flex items-center justify-center text-brand-sky flex-shrink-0 mt-0.5">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div class="text-xs space-y-1">
+                      <div class="font-bold text-brand-silver">{{ t('sidebar_privacy_title') }}</div>
+                      <p class="text-brand-muted text-[11px] leading-relaxed">
+                        {{ t('sidebar_privacy_desc') }}
+                      </p>
+                    </div>
+                  </div>
+
+                </aside>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================
+           2. EL PROBLEMA VS. EL NUEVO PARADIGMA (SLIDE 1 & 2 STORYTELLING)
+           =================================================================== -->
+      <section id="problema" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-t border-brand-border bg-brand-surface/40 scroll-mt-16">
+        <div class="max-w-7xl mx-auto space-y-12 reveal-section">
+          
+          <div class="max-w-2xl mx-auto text-center space-y-3">
+            <span class="text-xs font-mono uppercase tracking-wider text-rose-400 font-bold">
+              01 • {{ t('problem_tag') }}
+            </span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-brand-silver tracking-tight">
+              {{ t('problem_title') }}
+            </h2>
+            <p class="text-sm sm:text-base text-brand-muted leading-relaxed">
+              {{ t('problem_subtitle') }}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+            
+            <!-- Left Card: Traditional Habit Apps (The Problem) -->
+            <div class="bg-brand-surface rounded-3xl p-6 sm:p-8 border border-rose-500/25 shadow-elevation-1 space-y-6 flex flex-col justify-between">
+              <div class="space-y-4">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono font-bold">
+                  <span>✕ {{ t('problem_old_badge') }}</span>
+                </div>
+                <h3 class="text-xl font-bold text-brand-silver">
+                  {{ t('problem_old_title') }}
+                </h3>
+                <ul class="space-y-3.5 text-xs sm:text-sm text-brand-muted">
+                  <li class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-md bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center font-mono text-xs font-bold flex-shrink-0 mt-0.5">✕</span>
+                    <span><strong class="text-brand-silver">{{ t('prob_item1_bold') }}</strong> {{ t('prob_item1_text') }}</span>
+                  </li>
+                  <li class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-md bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center font-mono text-xs font-bold flex-shrink-0 mt-0.5">✕</span>
+                    <span><strong class="text-brand-silver">{{ t('prob_item2_bold') }}</strong> {{ t('prob_item2_text') }}</span>
+                  </li>
+                  <li class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-md bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center font-mono text-xs font-bold flex-shrink-0 mt-0.5">✕</span>
+                    <span><strong class="text-brand-silver">{{ t('prob_item3_bold') }}</strong> {{ t('prob_item3_text') }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-brand-obsidian border border-brand-border flex items-center justify-between text-xs font-mono">
+                <span class="text-brand-slate">{{ t('prob_result_label') }}</span>
+                <span class="text-rose-400 font-bold">{{ t('prob_result_val') }}</span>
+              </div>
+            </div>
+
+            <!-- Right Card: The Habit Paradigm Solution -->
+            <div class="bg-brand-surface rounded-3xl p-6 sm:p-8 border border-brand-mint/40 ring-1 ring-brand-mint/20 shadow-elevation-2 space-y-6 flex flex-col justify-between relative overflow-hidden">
+              <div class="absolute -right-16 -top-16 w-48 h-48 bg-brand-mint/10 rounded-full blur-3xl pointer-events-none"></div>
+
+              <div class="space-y-4 relative z-10">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-mint/15 border border-brand-mint/30 text-emerald-400 text-xs font-mono font-bold">
+                  <span>✓ {{ t('solution_new_badge') }}</span>
+                </div>
+                <h3 class="text-xl font-bold text-brand-silver">
+                  {{ t('solution_new_title') }}
+                </h3>
+                <ul class="space-y-3.5 text-xs sm:text-sm text-brand-muted">
+                  <li class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-md bg-brand-mint/20 border border-brand-mint/40 text-emerald-400 flex items-center justify-center font-mono text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
+                    <span><strong class="text-brand-silver">{{ t('sol_item1_bold') }}</strong> {{ t('sol_item1_text') }}</span>
+                  </li>
+                  <li class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-md bg-brand-mint/20 border border-brand-mint/40 text-emerald-400 flex items-center justify-center font-mono text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
+                    <span><strong class="text-brand-silver">{{ t('sol_item2_bold') }}</strong> {{ t('sol_item2_text') }}</span>
+                  </li>
+                  <li class="flex items-start space-x-3">
+                    <span class="w-5 h-5 rounded-md bg-brand-mint/20 border border-brand-mint/40 text-emerald-400 flex items-center justify-center font-mono text-xs font-bold flex-shrink-0 mt-0.5">✓</span>
+                    <span><strong class="text-brand-silver">{{ t('sol_item3_bold') }}</strong> {{ t('sol_item3_text') }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-brand-obsidian border border-brand-mint/30 flex items-center justify-between text-xs font-mono relative z-10">
+                <span class="text-brand-slate">{{ t('sol_result_label') }}</span>
+                <span class="text-brand-mint font-bold">{{ t('sol_result_val') }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           3. LOS 3 PILARES CIENTÍFICOS (INTERACTIVE BENTO GRID)
+           =================================================================== -->
+      <section id="pilares" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 scroll-mt-16">
+        
+        <div class="max-w-2xl mx-auto text-center space-y-3 reveal-section">
+          <span class="text-xs font-mono uppercase tracking-wider text-brand-sky font-bold">
+            02 • {{ t('pillars_tag') }}
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-brand-silver tracking-tight">
+            {{ t('pillars_title') }}
+          </h2>
+          <p class="text-sm sm:text-base text-brand-muted leading-relaxed">
+            {{ t('pillars_subtitle') }}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <!-- PILLAR 1: COGNITIVE LOAD LAW (MAX 3 + MULTI-HABIT UNLOCK) -->
+          <div class="bg-brand-surface rounded-3xl p-6 sm:p-7 border border-brand-border shadow-elevation-1 hover-lift flex flex-col justify-between space-y-6 reveal-section stagger-1">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-xl bg-brand-sky/15 border border-brand-sky/30 text-brand-sky font-mono font-bold text-sm flex items-center justify-center">
+                  01
+                </span>
+                <span class="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-elevated border border-brand-border text-brand-sky font-bold">
+                  +300% Adherencia
+                </span>
+              </div>
+              <h3 class="text-lg sm:text-xl font-bold text-brand-silver">
+                {{ t('p1_title') }}
+              </h3>
+              <p class="text-xs sm:text-sm text-brand-muted leading-relaxed">
+                {{ t('p1_desc') }}
+              </p>
+            </div>
+
+            <!-- Interactive Capacity Selector Mini-Widget -->
+            <div class="p-4 rounded-2xl bg-brand-obsidian border border-brand-border space-y-3">
+              <div class="flex items-center justify-between text-[11px] font-mono">
+                <span class="text-brand-slate">{{ t('p1_widget_label') }}</span>
+                <span class="text-brand-sky font-bold">{{ selectedCapacityMode }}</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 text-[11px] font-mono">
+                <button
+                  type="button"
+                  @click="setCapacityPreview('3 (Estricto)')"
+                  class="py-2 px-2 rounded-lg border font-bold spring-tactile cursor-pointer"
+                  :class="selectedCapacityMode === '3 (Estricto)' ? 'bg-brand-sky text-white border-brand-sky' : 'bg-brand-elevated text-brand-muted border-brand-border'"
+                >
+                  Máx 3
+                </button>
+                <button
+                  type="button"
+                  @click="setCapacityPreview('5 (Ampliado)')"
+                  class="py-2 px-2 rounded-lg border font-bold spring-tactile cursor-pointer"
+                  :class="selectedCapacityMode === '5 (Ampliado)' ? 'bg-brand-sky text-white border-brand-sky' : 'bg-brand-elevated text-brand-muted border-brand-border'"
+                >
+                  Ampliado 5
+                </button>
+                <button
+                  type="button"
+                  @click="setCapacityPreview('∞ Ilimitado')"
+                  class="py-2 px-2 rounded-lg border font-bold spring-tactile cursor-pointer"
+                  :class="selectedCapacityMode === '∞ Ilimitado' ? 'bg-brand-sky text-white border-brand-sky' : 'bg-brand-elevated text-brand-muted border-brand-border'"
+                >
+                  ∞ Multi
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PILLAR 2: GUILT-FREE FLEX HABITS (INTERACTIVE SLIDER) -->
+          <div class="bg-brand-surface rounded-3xl p-6 sm:p-7 border border-brand-border shadow-elevation-1 hover-lift flex flex-col justify-between space-y-6 reveal-section stagger-2">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-xl bg-brand-mint/15 border border-brand-mint/30 text-emerald-400 font-mono font-bold text-sm flex items-center justify-center">
+                  02
+                </span>
+                <span class="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-mint/10 border border-brand-mint/30 text-emerald-400 font-bold">
+                  Modo Flex vs 7/7
+                </span>
+              </div>
+              <h3 class="text-lg sm:text-xl font-bold text-brand-silver">
+                {{ t('p2_title') }}
+              </h3>
+              <p class="text-xs sm:text-sm text-brand-muted leading-relaxed">
+                {{ t('p2_desc') }}
+              </p>
+            </div>
+
+            <!-- Interactive Flex Days Calculator -->
+            <div class="p-4 rounded-2xl bg-brand-obsidian border border-brand-border space-y-2.5">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-brand-slate">{{ t('p2_slider_target') }}:</span>
+                <span class="text-emerald-400 font-bold">{{ flexPreviewDays }} {{ t('days_per_week_label') }}</span>
+              </div>
+              <input
+                v-model.number="flexPreviewDays"
+                type="range"
+                min="2"
+                max="6"
+                step="1"
+                aria-label="Meta de días por semana"
+                class="w-full accent-emerald-500 cursor-pointer"
+              />
+              <div class="text-[11px] font-mono text-brand-muted flex items-center justify-between pt-1">
+                <span>{{ t('p2_rest_included') }}:</span>
+                <span class="px-2 py-0.5 rounded bg-brand-mint/15 text-emerald-400 font-bold">
+                  {{ 7 - flexPreviewDays }} {{ t('p2_free_days_unit') }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- PILLAR 3: MONTHLY EMERGENCY SHIELD -->
+          <div class="bg-brand-surface rounded-3xl p-6 sm:p-7 border border-brand-border shadow-elevation-1 hover-lift flex flex-col justify-between space-y-6 reveal-section stagger-3">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 font-mono font-bold text-sm flex items-center justify-center">
+                  03
+                </span>
+                <span class="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold">
+                  1 Escudo / Mes
+                </span>
+              </div>
+              <h3 class="text-lg sm:text-xl font-bold text-brand-silver">
+                {{ t('p3_title') }}
+              </h3>
+              <p class="text-xs sm:text-sm text-brand-muted leading-relaxed">
+                {{ t('p3_desc') }}
+              </p>
+            </div>
+
+            <!-- Interactive Shield Protection Preview -->
+            <div class="p-4 rounded-2xl bg-brand-obsidian border border-brand-border space-y-3">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-amber-400 font-bold">🔥 Racha: 48 Días</span>
+                <span class="text-[11px]" :class="pillarShieldActive ? 'text-brand-sky font-bold' : 'text-rose-400'">
+                  {{ pillarShieldActive ? '🛡️ Racha Blindada' : '⚠️ Día de Imprevisto' }}
+                </span>
+              </div>
+              <button
+                type="button"
+                @click="togglePillarShield"
+                class="w-full py-2 px-3 rounded-xl text-xs font-mono font-bold border spring-tactile cursor-pointer flex items-center justify-center space-x-1.5"
+                :class="pillarShieldActive
+                  ? 'bg-brand-sky text-white border-brand-sky shadow-glow-sky'
+                  : 'bg-brand-elevated text-brand-silver border-brand-border hover:border-brand-sky'"
+              >
+                <span>{{ pillarShieldActive ? t('p3_btn_active') : t('p3_btn_deploy') }}</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           4. ARQUITECTURA LOCAL-FIRST, PWA MULTI-DISPOSITIVO Y PRIVACIDAD
+           =================================================================== -->
+      <section id="arquitectura" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-t border-brand-border bg-brand-surface/35 scroll-mt-16">
+        <div class="max-w-7xl mx-auto space-y-12 reveal-section">
+
+          <div class="max-w-2xl mx-auto text-center space-y-3">
+            <span class="text-xs font-mono uppercase tracking-wider text-brand-mint font-bold">
+              03 • {{ t('arch_tag') }}
+            </span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-brand-silver tracking-tight">
+              {{ t('arch_title') }}
+            </h2>
+            <p class="text-sm sm:text-base text-brand-muted leading-relaxed">
+              {{ t('arch_subtitle') }}
+            </p>
+          </div>
+
+          <!-- 4 Technical Highlights Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border shadow-elevation-1 space-y-2.5">
+              <div class="w-9 h-9 rounded-xl bg-brand-sky/15 border border-brand-sky/30 text-brand-sky flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h3 class="font-bold text-sm text-brand-silver">{{ t('arch_f1_title') }}</h3>
+              <p class="text-xs text-brand-muted leading-relaxed">{{ t('arch_f1_desc') }}</p>
+            </div>
+
+            <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border shadow-elevation-1 space-y-2.5">
+              <div class="w-9 h-9 rounded-xl bg-brand-mint/15 border border-brand-mint/30 text-emerald-400 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+              </div>
+              <h3 class="font-bold text-sm text-brand-silver">{{ t('arch_f2_title') }}</h3>
+              <p class="text-xs text-brand-muted leading-relaxed">{{ t('arch_f2_desc') }}</p>
+            </div>
+
+            <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border shadow-elevation-1 space-y-2.5">
+              <div class="w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/30 text-violet-400 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 class="font-bold text-sm text-brand-silver">{{ t('arch_f3_title') }}</h3>
+              <p class="text-xs text-brand-muted leading-relaxed">{{ t('arch_f3_desc') }}</p>
+            </div>
+
+            <div class="bg-brand-surface rounded-2xl p-5 border border-brand-border shadow-elevation-1 space-y-2.5">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+              <h3 class="font-bold text-sm text-brand-silver">{{ t('arch_f4_title') }}</h3>
+              <p class="text-xs text-brand-muted leading-relaxed">{{ t('arch_f4_desc') }}</p>
+            </div>
+          </div>
+
+          <!-- 10-Second Multi-OS Installation Interactive Preview -->
+          <div class="bg-brand-surface rounded-3xl p-6 sm:p-8 border border-brand-border shadow-elevation-1 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-4">
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-brand-silver">{{ t('install_box_title') }}</h3>
+                <p class="text-xs text-brand-muted">{{ t('install_box_subtitle') }}</p>
+              </div>
+
+              <div class="inline-flex p-1 rounded-xl bg-brand-elevated border border-brand-border self-start">
+                <button
+                  v-for="os in ['ios', 'android', 'desktop']"
+                  :key="os"
+                  type="button"
+                  @click="selectedOS = os; playTapSound()"
+                  class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold spring-tactile cursor-pointer"
+                  :class="selectedOS === os ? 'bg-brand-sky text-white shadow-glow-sky' : 'text-brand-muted hover:text-brand-silver'"
+                >
+                  {{ os === 'ios' ? 'iOS / iPadOS' : (os === 'android' ? 'Android' : 'Mac / Windows') }}
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div
+                v-for="(step, sIdx) in currentOSSteps"
+                :key="selectedOS + '-' + sIdx"
+                class="p-4 rounded-2xl bg-brand-obsidian border border-brand-border flex items-start space-x-3"
+              >
+                <span class="w-7 h-7 rounded-lg bg-brand-sky/15 border border-brand-sky/30 text-brand-sky font-mono font-bold text-xs flex items-center justify-center flex-shrink-0">
+                  0{{ sIdx + 1 }}
+                </span>
+                <div class="space-y-1">
+                  <div class="text-xs font-bold text-brand-silver">{{ step.title }}</div>
+                  <p class="text-xs text-brand-muted leading-relaxed">{{ step.desc }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           5. COMPARATIVA DIRECTA (HABIT PARADIGM PRO VS APPS DE SUSCRIPCIÓN)
+           =================================================================== -->
+      <section id="comparativa" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-10 scroll-mt-16 reveal-section">
+        <div class="text-center space-y-3">
+          <span class="text-xs font-mono uppercase tracking-wider text-brand-sky font-bold">
+            04 • {{ t('comp_tag') }}
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-brand-silver tracking-tight">
+            {{ t('comp_title') }}
+          </h2>
+        </div>
+
+        <div class="bg-brand-surface rounded-3xl border border-brand-border shadow-elevation-1 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-brand-border bg-brand-obsidian/60 text-xs font-mono uppercase text-brand-slate">
+                  <th class="py-4 px-5">{{ t('comp_col_feature') }}</th>
+                  <th class="py-4 px-5 text-brand-sky font-bold bg-brand-sky/5 border-x border-brand-border">Habit Paradigm Pro v2.6</th>
+                  <th class="py-4 px-5 text-brand-slate">{{ t('comp_col_others') }}</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-brand-border text-xs sm:text-sm">
+                <tr v-for="(row, rIdx) in comparisonRows" :key="'comp-' + rIdx" class="hover:bg-brand-elevated/30 transition-colors">
+                  <td class="py-3.5 px-5 font-semibold text-brand-silver">{{ row.feature }}</td>
+                  <td class="py-3.5 px-5 font-mono font-bold text-brand-mint bg-brand-sky/5 border-x border-brand-border">
+                    ✓ {{ row.us }}
+                  </td>
+                  <td class="py-3.5 px-5 font-mono text-brand-slate">
+                    ✕ {{ row.them }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           6. TESTIMONIOS DE OPERADORES (SOCIAL PROOF)
+           =================================================================== -->
+      <section class="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 border-t border-brand-border bg-brand-surface/30 reveal-section">
+        <div class="max-w-7xl mx-auto space-y-10">
+          <div class="text-center space-y-2">
+            <span class="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold">★ 4.9 / 5.0 • {{ t('reviews_tag') }}</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-silver tracking-tight">
+              {{ t('reviews_title') }}
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+              v-for="(rev, idx) in testimonials"
+              :key="'rev-' + idx"
+              class="bg-brand-surface rounded-2xl p-6 border border-brand-border shadow-elevation-1 flex flex-col justify-between space-y-4"
+            >
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex text-amber-400 text-xs">★★★★★</div>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-elevated border border-brand-border text-brand-sky">
+                    {{ rev.streak }}
+                  </span>
+                </div>
+                <p class="text-xs sm:text-sm text-brand-muted leading-relaxed">
+                  "{{ lang === 'es' ? rev.quoteEs : rev.quoteEn }}"
+                </p>
+              </div>
+              <div class="flex items-center space-x-3 pt-3 border-t border-brand-border">
+                <div class="w-8 h-8 rounded-lg bg-brand-elevated border border-brand-border flex items-center justify-center font-mono text-xs font-bold text-brand-sky">
+                  {{ rev.initials }}
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-brand-silver">{{ rev.name }}</div>
+                  <div class="text-[10px] font-mono text-brand-slate">{{ lang === 'es' ? rev.roleEs : rev.roleEn }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           7. LICENCIA PRO VITALICIA (HIGH-CONVERSION PRICING CARD)
+           =================================================================== -->
+      <section id="licencia" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto scroll-mt-16 reveal-section">
+        <div class="bg-brand-surface rounded-3xl p-6 sm:p-10 lg:p-12 border-2 border-brand-sky/50 shadow-elevation-2 relative overflow-hidden">
+          
+          <div class="absolute -right-24 -top-24 w-72 h-72 bg-brand-sky/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -left-24 -bottom-24 w-72 h-72 bg-brand-mint/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <!-- Left 7 Cols: Value Breakdown -->
+            <div class="lg:col-span-7 space-y-5">
+              <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-mint/15 border border-brand-mint/30 text-emerald-400 text-xs font-mono font-bold">
+                <span>⚡ {{ t('pricing_badge') }}</span>
+              </div>
+
+              <h2 class="text-2xl sm:text-4xl font-extrabold text-brand-silver tracking-tight">
+                Habit Paradigm <span class="text-brand-sky">Edición Pro Vitalicia</span>
+              </h2>
+
+              <p class="text-xs sm:text-sm text-brand-muted leading-relaxed">
+                {{ t('pricing_desc') }}
+              </p>
+
+              <ul class="space-y-2.5 text-xs sm:text-sm text-brand-silver pt-1">
+                <li v-for="(inc, iIdx) in pricingIncludes" :key="'inc-' + iIdx" class="flex items-center space-x-2.5">
+                  <svg class="w-4 h-4 text-brand-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{{ inc }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Right 5 Cols: Checkout Box -->
+            <div class="lg:col-span-5 bg-brand-obsidian rounded-2xl p-6 border border-brand-border space-y-5 text-center shadow-elevation-1">
+              <div class="space-y-1">
+                <span class="text-[11px] font-mono uppercase tracking-wider text-brand-slate line-through">
+                  {{ t('pricing_compare_price') }}
+                </span>
+                <div class="flex items-baseline justify-center space-x-1.5">
+                  <span class="text-4xl sm:text-5xl font-extrabold font-mono text-brand-silver">$12</span>
+                  <span class="text-xs font-mono text-brand-slate">USD</span>
+                </div>
+                <span class="inline-block text-[11px] font-mono text-brand-mint font-bold">
+                  {{ t('pricing_one_time') }}
+                </span>
+              </div>
+
+              <a
+                :href="checkoutUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                @click="handleCheckoutClick"
+                class="w-full py-4 px-5 rounded-xl bg-brand-sky hover:opacity-95 text-white font-extrabold text-sm shadow-glow-sky spring-tactile flex items-center justify-center space-x-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky"
+              >
+                <span>{{ t('pricing_cta_btn') }}</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+
+              <div class="space-y-1.5 text-[11px] font-mono text-brand-slate pt-1 border-t border-brand-border">
+                <div>🔒 {{ t('pricing_guarantee_1') }}</div>
+                <div>📲 {{ t('pricing_guarantee_2') }}</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           8. PREGUNTAS FRECUENTES (ACCESSIBLE ACCORDION FAQ)
+           =================================================================== -->
+      <section id="faq" class="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto space-y-8 scroll-mt-16 reveal-section">
+        <div class="text-center space-y-2">
+          <span class="text-xs font-mono uppercase tracking-wider text-brand-sky font-bold">05 • FAQ</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-silver tracking-tight">
+            {{ t('faq_title') }}
+          </h2>
+        </div>
+
+        <div class="space-y-3">
+          <div
+            v-for="(item, fIdx) in faqItems"
+            :key="'faq-' + fIdx"
+            class="bg-brand-surface rounded-2xl border border-brand-border overflow-hidden transition-colors"
+          >
+            <button
+              type="button"
+              @click="toggleFaq(fIdx)"
+              :aria-expanded="openFaqIndex === fIdx"
+              class="w-full px-5 py-4 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-brand-silver hover:bg-brand-elevated/40 spring-tactile cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-sky"
+            >
+              <span>{{ item.q }}</span>
+              <svg
+                class="w-4 h-4 text-brand-sky flex-shrink-0"
+                style="transition: transform 200ms var(--ease-out);"
+                :class="openFaqIndex === fIdx ? 'rotate-180' : ''"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              v-show="openFaqIndex === fIdx"
+              class="px-5 pb-4 text-xs sm:text-sm text-brand-muted leading-relaxed border-t border-brand-border-subtle pt-3"
+            >
+              {{ item.a }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- =====================================================================
+         FOOTER WITH KEYBOARD SHORTCUTS & SYSTEM TELEMETRY
+         ===================================================================== -->
+    <footer class="relative z-10 border-t border-brand-border bg-brand-obsidian/90 py-10 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+        
+        <div class="flex items-center space-x-3">
+          <img src="logo.jpg" alt="Habit Paradigm" class="w-8 h-8 rounded-lg object-cover border border-brand-border">
+          <div>
+            <div class="text-xs font-bold text-brand-silver">Habit Paradigm Commercial Suite • v2.6 Pro</div>
+            <div class="text-[11px] font-mono text-brand-slate">{{ t('footer_copy') }}</div>
+          </div>
+        </div>
+
+        <div class="text-[11px] font-mono text-brand-slate text-center sm:text-right space-y-1">
+          <div>{{ t('footer_shortcuts') }}</div>
+          <div class="text-brand-muted">100% Local-First • Zero Cloud Tracking • Plus Jakarta Sans & JetBrains Mono</div>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- =======================================================================
+       WEB AUDIO SYNTHESIZER (EXACT MATCH FROM HABIT PARADIGM v2.6)
+       ======================================================================= -->
+  <script>
+    class AcousticFeedback {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playTap() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(780, now + 0.12);
+          gain.gain.setValueAtTime(0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.18);
+        } catch (e) {}
+      }
+      playShield() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(380, now);
+          osc.frequency.exponentialRampToValueAtTime(620, now + 0.25);
+          gain.gain.setValueAtTime(0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } catch (e) {}
+      }
+    }
+
+    const audioFeedback = new AcousticFeedback();
+  </script>
+
+  <!-- =======================================================================
+       VUE 3 LANDING PAGE APPLICATION & LIVE INTERACTIVE DEMO
+       ======================================================================= -->
+  <script>
+    // =========================================================================
+    // CONFIGURACIÓN DE ENLACE DE COMPRA (HOTMART OFICIAL)
+    // =========================================================================
+    const CHECKOUT_URL = 'https://pay.hotmart.com/N108006327G?bid=1791921412210';
+
+    const { createApp, ref, computed, onMounted } = Vue;
+
+    const i18n = {
+      es: {
+        nav_subtitle: 'Sistema Operativo de Constancia Humana',
+        nav_problem: 'El Problema',
+        nav_demo: 'Demo en Vivo',
+        nav_pillars: '3 Pilares',
+        nav_privacy: 'Local-First & PWA',
+        nav_compare: 'Comparativa',
+        nav_cta: 'Obtener Acceso',
+        accent_selector_label: 'Selector de color de acento en vivo',
+        audio_on: 'Respuesta acústica activada',
+        audio_off: 'Sonido silenciado',
+        theme_light: 'Cambiar a Modo Claro',
+        theme_dark: 'Cambiar a Modo Oscuro',
+        hero_badge: 'Arquitectura Conductual Sin Fricción',
+        hero_title_1: 'Construye constancia real',
+        hero_title_highlight: 'sin culpa ni sobrecarga.',
+        hero_subtitle: 'La micro-aplicación minimalista para ejecutar tus hábitos en 1 segundo. Diseñada con neurociencia conductual: límite de carga cognitiva, hábitos flexibles sin perder tu racha, escudo mensual de imprevistos y privacidad 100% Local-First.',
+        hero_cta_primary: 'Obtener Licencia Vitalicia — $12 USD (Pago Único)',
+        hero_cta_secondary: 'Probar Demo Interactiva Ahora',
+        hero_trust_1: 'Pago Único de por Vida (Sin Suscripciones)',
+        hero_trust_2: '100% Privado y Offline en tu Dispositivo',
+        hero_trust_3: '4.9/5 Satisfacción Verificada',
+        sandbox_live_tag: 'INTERACTIVO EN VIVO',
+        sandbox_instruction: 'Haz clic en "Ejecutar", usa el Escudo 🛡️ o cambia el color de acento en tiempo real:',
+        sandbox_accent_label: 'Acento del Sistema',
+        demo_tab_habits: 'Hábitos de Hoy',
+        demo_tab_analytics: 'Analítica & Anillos',
+        demo_tab_widget: 'Widget Móvil',
+        demo_velocity_label: 'Velocidad de Ejecución Diaria',
+        demo_completed_word: 'completados',
+        demo_active_protocols: 'Hábitos Activos (Prueba tocando cada tarjeta)',
+        demo_cap_strict: 'Capacidad: Estricto 3',
+        demo_cap_unlimited: 'Modo Multihábito: ∞ Activo',
+        days_word: 'días',
+        shielded_status: 'Protegido Hoy',
+        free_rest_days: 'días libres/sem sin culpa',
+        demo_shield_tooltip: 'Probar Escudo de Recuperación Mensual',
+        shield_active_btn: 'Blindado',
+        shield_use_btn: 'Escudo',
+        btn_executed: 'Ejecutado',
+        undo_word: 'deshacer',
+        btn_shielded: 'Protegido',
+        btn_execute_now: 'Ejecutar',
+        analytics_spark_title: 'Velocidad y Tendencia (14 Días)',
+        analytics_spark_desc: 'Tasa de cumplimiento diario sincronizada con tus ejecuciones de arriba.',
+        widget_sim_heading: 'Toca cualquier hábito dentro del widget móvil para ejecutarlo',
+        sidebar_momentum: 'Racha y Momento',
+        sidebar_adherence: 'Constancia 30D',
+        sidebar_shield_label: 'Escudo Mensual',
+        sidebar_matrix_28d: 'Matriz de Consistencia (28 Días)',
+        sidebar_privacy_title: 'Sandbox Local Protegido',
+        sidebar_privacy_desc: 'Cero servidores externos. Tus datos viven cifrados en tu navegador con respaldos JSON en 1 clic.',
+        problem_tag: 'El Problema de Raíz',
+        problem_title: '¿Por qué siempre abandonas tus hábitos a los 7 días?',
+        problem_subtitle: 'No es falta de disciplina: es un fallo de diseño. Las aplicaciones tradicionales están programadas para saturarte y castigarte al primer imprevisto.',
+        problem_old_badge: 'Apps Tradicionales de Suscripción',
+        problem_old_title: 'El ciclo de sobrecarga, culpa y abandono',
+        prob_item1_bold: 'Castigo por el primer fallo:',
+        prob_item1_text: 'Enfermas un día o viajas y tu racha de 40 días cae a cero. El efecto "todo o nada" destruye tu motivación.',
+        prob_item2_bold: 'Sobrecarga cognitiva absurda:',
+        prob_item2_text: 'Te incitan a crear 15 hábitos el lunes. El jueves estás agotado por exceso de notificaciones y menús complejos.',
+        prob_item3_bold: 'Alquiler eterno de tus propios datos:',
+        prob_item3_text: 'Cobros mensuales de $5 a $10 USD y tus rutinas privadas almacenadas en servidores de terceros.',
+        prob_result_label: 'Resultado habitual a las 2 semanas:',
+        prob_result_val: '92% de Abandono por Fricción',
+        solution_new_badge: 'El Estándar Habit Paradigm Pro',
+        solution_new_title: 'Ingeniería conductual diseñada para la vida real',
+        sol_item1_bold: 'Registro táctil en 1 segundo:',
+        sol_item1_text: 'Abre, toca o presiona [1-3] en tu teclado y sigue con tu día. Con respuesta acústica y micro-interacciones físicas.',
+        sol_item2_bold: 'Descanso justificado + Escudo mensual:',
+        sol_item2_text: 'Configura metas Flex (ej. 4 o 5 días/semana) y usa tu Escudo de Emergencia mensual sin romper jamás tu racha.',
+        sol_item3_bold: '100% tuyo para siempre:',
+        sol_item3_text: 'Un único pago vitalicio. Funciona offline en iPhone, Android, Mac y PC sin cuentas ni rastreadores.',
+        sol_result_label: 'Impacto medido en adherencia:',
+        sol_result_val: '+300% Constancia Sostenida',
+        pillars_tag: 'Arquitectura Científica',
+        pillars_title: 'Los 3 Pilares que garantizan tu constancia',
+        pillars_subtitle: 'Cada decisión de interfaz en Habit Paradigm responde a principios probados de psicología conductual.',
+        p1_title: 'Ley de Carga Cognitiva (3 a ∞)',
+        p1_desc: 'Limitar a 3 disciplinas principales multiplica tu enfoque. Y cuando domines tu base, desbloquea en 1 clic el Modo Multihábito ilimitado.',
+        p1_widget_label: 'Modo de Capacidad:',
+        p2_title: 'Hábitos Flexibles sin Culpa',
+        p2_desc: 'No todo hábito debe ser 7/7. Ajusta tu objetivo semanal y el sistema calculará tus días de descanso ganados automáticamente.',
+        p2_slider_target: 'Meta Semanal',
+        days_per_week_label: 'días / semana',
+        p2_rest_included: 'Descanso protegido',
+        p2_free_days_unit: 'días libres sin penalización',
+        p3_title: 'Escudo de Recuperación Mensual',
+        p3_desc: '¿Un viaje imprevisto o gripe? Activa tu token mensual de emergencia para blindar tu racha y mantener intacto tu impulso psicológico.',
+        p3_btn_deploy: '🛡️ Probar Despliegue de Escudo',
+        p3_btn_active: '✓ Racha de 48 Días Protegida',
+        arch_tag: 'Soberanía de Datos y Velocidad',
+        arch_title: '100% Local-First, Offline e Instalable en 10 Segundos',
+        arch_subtitle: 'Olvídate de pantallas de carga, inicios de sesión obligatorios o caídas de servidor.',
+        arch_f1_title: 'Cero Rastreo y Privacidad Total',
+        arch_f1_desc: 'Tus hábitos viven exclusivamente en el almacenamiento blindado (Persistent Storage) de tu propio dispositivo.',
+        arch_f2_title: 'Respaldos JSON en 1 Clic',
+        arch_f2_desc: 'Exporta e importa todo tu historial en formato estándar .json cuando quieras cambiar de teléfono o computadora.',
+        arch_f3_title: 'Ejecución Instantánea (<16ms)',
+        arch_f3_desc: 'Sin esperas de red. Animaciones aceleradas por hardware y motor reactivo ultraligero.',
+        arch_f4_title: '6 Colores de Acento + Audio',
+        arch_f4_desc: 'Personaliza el tono luminoso del sistema, alterna Modo Oscuro Obsidian / Claro y disfruta de síntesis acústica Web Audio.',
+        install_box_title: 'Instálala como App Nativa en todos tus dispositivos',
+        install_box_subtitle: 'Tecnología Progressive Web App (PWA) de última generación sin pasar por tiendas invasivas.',
+        comp_tag: 'Transparencia Total',
+        comp_title: 'Por qué elegir Habit Paradigm frente al resto',
+        comp_col_feature: 'Característica',
+        comp_col_others: 'Apps Tradicionales',
+        reviews_tag: 'Comunidad de Alto Enfoque',
+        reviews_title: 'Lo que dicen quienes cambiaron al nuevo paradigma',
+        pricing_badge: 'Oferta de Lanzamiento • Licencia Vitalicia',
+        pricing_desc: 'Adquiere hoy el paquete completo de Habit Paradigm Pro v2.6. Sin cobros mensuales ocultos, sin anuncios y con acceso inmediato para todos tus dispositivos.',
+        pricing_compare_price: 'Apps de suscripción: $59 USD / año',
+        pricing_one_time: '✓ Pago Único • Acceso de por Vida',
+        pricing_cta_btn: 'Acceder a Habit Paradigm Ahora',
+        pricing_guarantee_1: 'Entrega digital inmediata tras el pago',
+        pricing_guarantee_2: 'Compatible con iOS, Android, Mac y Windows',
+        faq_title: 'Preguntas Frecuentes',
+        footer_copy: 'Todos los derechos reservados • Licencia Comercial Vitalicia',
+        footer_shortcuts: 'Atajos en esta página: [1-3] Ejecutar Hábito en Demo • [T] Tema • [L] Idioma ES/EN'
+      },
+      en: {
+        nav_subtitle: 'Human Adherence Operating System',
+        nav_problem: 'The Problem',
+        nav_demo: 'Live Demo',
+        nav_pillars: '3 Pillars',
+        nav_privacy: 'Local-First & PWA',
+        nav_compare: 'Comparison',
+        nav_cta: 'Get Access',
+        accent_selector_label: 'Live system accent color selector',
+        audio_on: 'Acoustic feedback enabled',
+        audio_off: 'Sound muted',
+        theme_light: 'Switch to Light Mode',
+        theme_dark: 'Switch to Dark Mode',
+        hero_badge: 'Frictionless Behavioral Architecture',
+        hero_title_1: 'Build real consistency',
+        hero_title_highlight: 'without guilt or overload.',
+        hero_subtitle: 'The minimalist micro-app to log your habits in 1 second. Built on behavioral neuroscience: cognitive load limits, guilt-free flex habits, monthly recovery shield, and 100% Local-First privacy.',
+        hero_cta_primary: 'Get Lifetime License — $12 USD (One-Time)',
+        hero_cta_secondary: 'Try Interactive Live Demo',
+        hero_trust_1: 'One-Time Payment Forever (Zero Subscriptions)',
+        hero_trust_2: '100% Private & Offline on Your Device',
+        hero_trust_3: '4.9/5 Verified Satisfaction',
+        sandbox_live_tag: 'LIVE INTERACTIVE SANDBOX',
+        sandbox_instruction: 'Click "Execute", deploy the Shield 🛡️ or switch accent colors in real time:',
+        sandbox_accent_label: 'System Accent',
+        demo_tab_habits: "Today's Habits",
+        demo_tab_analytics: 'Analytics & Rings',
+        demo_tab_widget: 'Mobile Widget',
+        demo_velocity_label: 'Daily Execution Velocity',
+        demo_completed_word: 'completed',
+        demo_active_protocols: 'Active Habits (Tap any card to test)',
+        demo_cap_strict: 'Capacity: Strict 3',
+        demo_cap_unlimited: 'Multi-Habit Mode: ∞ Active',
+        days_word: 'days',
+        shielded_status: 'Shielded Today',
+        free_rest_days: 'guilt-free rest days/wk',
+        demo_shield_tooltip: 'Test Monthly Recovery Shield',
+        shield_active_btn: 'Shielded',
+        shield_use_btn: 'Shield',
+        btn_executed: 'Executed',
+        undo_word: 'undo',
+        btn_shielded: 'Shielded',
+        btn_execute_now: 'Execute',
+        analytics_spark_title: '14-Day Velocity & Compliance Trend',
+        analytics_spark_desc: 'Daily completion rate synced live with your check-ins above.',
+        widget_sim_heading: 'Tap any habit inside the mobile widget to execute it',
+        sidebar_momentum: 'Streak & Momentum',
+        sidebar_adherence: '30D Compliance',
+        sidebar_shield_label: 'Monthly Shield',
+        sidebar_matrix_28d: 'Consistency Matrix (28 Days)',
+        sidebar_privacy_title: 'Protected Local Sandbox',
+        sidebar_privacy_desc: 'Zero external servers. Your data lives encrypted in your browser with 1-click JSON backups.',
+        problem_tag: 'The Root Cause',
+        problem_title: 'Why do you always quit your habits after 7 days?',
+        problem_subtitle: 'It is not a lack of discipline—it is a design flaw. Traditional apps are engineered to overwhelm you and punish you on your first missed day.',
+        problem_old_badge: 'Traditional Subscription Apps',
+        problem_old_title: 'The cycle of overload, guilt, and churn',
+        prob_item1_bold: 'Punished for real life:',
+        prob_item1_text: 'Get sick or travel for one day and your 40-day streak resets to zero. All-or-nothing guilt kills momentum.',
+        prob_item2_bold: 'Absurd cognitive overload:',
+        prob_item2_text: 'They push you to track 15 habits on Monday. By Thursday you are burned out from notification spam.',
+        prob_item3_bold: 'Renting your own data forever:',
+        prob_item3_text: '$5 to $10/month forever while your private routines sit on third-party marketing servers.',
+        prob_result_label: 'Typical outcome after 2 weeks:',
+        prob_result_val: '92% Abandonment Rate',
+        solution_new_badge: 'The Habit Paradigm Pro Standard',
+        solution_new_title: 'Behavioral engineering built for real life',
+        sol_item1_bold: '1-second tactile logging:',
+        sol_item1_text: 'Open, tap or press [1-3] on your keyboard and get back to life. With synthesized audio & tactile physics.',
+        sol_item2_bold: 'Planned rest + Monthly Shield:',
+        sol_item2_text: 'Set Flex goals (e.g., 4 or 5 days/week) and deploy your monthly Emergency Shield without breaking your streak.',
+        sol_item3_bold: '100% yours forever:',
+        sol_item3_text: 'One single payment for life. Works offline on iPhone, Android, Mac, and PC with zero accounts or trackers.',
+        sol_result_label: 'Measured adherence impact:',
+        sol_result_val: '+300% Sustained Consistency',
+        pillars_tag: 'Scientific Architecture',
+        pillars_title: 'The 3 Pillars that guarantee your consistency',
+        pillars_subtitle: 'Every interface decision in Habit Paradigm is grounded in proven behavioral psychology.',
+        p1_title: 'Cognitive Load Law (3 to ∞)',
+        p1_desc: 'Limiting active disciplines to 3 triples adherence. Once mastered, unlock Unlimited Multi-Habit Mode in 1 click.',
+        p1_widget_label: 'Capacity Mode:',
+        p2_title: 'Guilt-Free Flex Habits',
+        p2_desc: 'Not every habit is 7/7. Set your weekly target and the engine automatically justifies your earned rest days.',
+        p2_slider_target: 'Weekly Target',
+        days_per_week_label: 'days / week',
+        p2_rest_included: 'Protected rest',
+        p2_free_days_unit: 'guilt-free rest days',
+        p3_title: 'Monthly Recovery Shield',
+        p3_desc: 'Unexpected trip or illness? Deploy your monthly emergency token to shield your streak and preserve psychological momentum.',
+        p3_btn_deploy: '🛡️ Test Shield Deployment',
+        p3_btn_active: '✓ 48-Day Streak Protected',
+        arch_tag: 'Data Sovereignty & Speed',
+        arch_title: '100% Local-First, Offline & Installable in 10 Seconds',
+        arch_subtitle: 'Forget loading spinners, mandatory sign-ups, or cloud outages.',
+        arch_f1_title: 'Zero Tracking & Total Privacy',
+        arch_f1_desc: 'Your habits live strictly inside your device’s protected Persistent Storage sandbox.',
+        arch_f2_title: '1-Click JSON Backups',
+        arch_f2_desc: 'Export and restore your entire history in standard .json format anytime you switch devices.',
+        arch_f3_title: 'Instant Execution (<16ms)',
+        arch_f3_desc: 'Zero network latency. GPU hardware-accelerated animations and ultra-light reactive engine.',
+        arch_f4_title: '6 Accent Tints + Web Audio',
+        arch_f4_desc: 'Customize the luminous system accent, toggle Obsidian Dark / Light mode, and enjoy Web Audio synthesis.',
+        install_box_title: 'Install as a Native App across all your devices',
+        install_box_subtitle: 'Next-gen Progressive Web App (PWA) technology—no bloated app stores required.',
+        comp_tag: 'Full Transparency',
+        comp_title: 'Why choose Habit Paradigm over the rest',
+        comp_col_feature: 'Feature',
+        comp_col_others: 'Traditional Apps',
+        reviews_tag: 'High-Focus Community',
+        reviews_title: 'What operators say after switching to the new paradigm',
+        pricing_badge: 'Launch Offer • Lifetime Pro License',
+        pricing_desc: 'Get the complete Habit Paradigm Pro v2.6 suite today. Zero monthly subscriptions, zero ads, and instant access across all your devices.',
+        pricing_compare_price: 'Subscription apps: $59 USD / year',
+        pricing_one_time: '✓ One-Time Payment • Lifetime Access',
+        pricing_cta_btn: 'Get Habit Paradigm Now',
+        pricing_guarantee_1: 'Instant digital delivery after checkout',
+        pricing_guarantee_2: 'Works on iOS, Android, Mac, and Windows',
+        faq_title: 'Frequently Asked Questions',
+        footer_copy: 'All rights reserved • Commercial Lifetime License',
+        footer_shortcuts: 'Page Shortcuts: [1-3] Toggle Demo Habit • [T] Theme • [L] Language ES/EN'
+      }
+    };
+
+    createApp({
+      setup() {
+        const lang = ref('es');
+        const isDarkMode = ref(true);
+        const soundEnabled = ref(true);
+        const activeAccent = ref('sky');
+        const demoTab = ref('habits');
+        const demoUnlimited = ref(false);
+        const celebratingId = ref(null);
+        const checkoutUrl = ref(CHECKOUT_URL);
+
+        // Interactive Pillar Widgets State
+        const selectedCapacityMode = ref('3 (Estricto)');
+        const flexPreviewDays = ref(5);
+        const pillarShieldActive = ref(false);
+        const selectedOS = ref('ios');
+        const openFaqIndex = ref(0);
+
+        const availableAccents = [
+          { id: 'sky', name: 'Sky Electric', hex: '#0EA5E9', glow: 'rgba(14, 165, 233, 0.38)', bgClass: 'bg-[#0EA5E9]' },
+          { id: 'mint', name: 'Emerald Mint', hex: '#10B981', glow: 'rgba(16, 185, 129, 0.38)', bgClass: 'bg-[#10B981]' },
+          { id: 'violet', name: 'Royal Violet', hex: '#8B5CF6', glow: 'rgba(139, 92, 246, 0.38)', bgClass: 'bg-[#8B5CF6]' },
+          { id: 'indigo', name: 'Deep Indigo', hex: '#6366F1', glow: 'rgba(99, 102, 241, 0.38)', bgClass: 'bg-[#6366F1]' },
+          { id: 'amber', name: 'Amber Gold', hex: '#F59E0B', glow: 'rgba(245, 158, 11, 0.38)', bgClass: 'bg-[#F59E0B]' },
+          { id: 'rose', name: 'Crimson Rose', hex: '#F43F5E', glow: 'rgba(244, 63, 94, 0.38)', bgClass: 'bg-[#F43F5E]' }
+        ];
+
+        // Live Sandbox Habits
+        const demoHabits = ref([
+          {
+            id: 'h1',
+            titleEs: 'Bloque de Enfoque Profundo (90m)',
+            titleEn: 'Deep Focus Block (90m)',
+            emoji: '🎯',
+            mode: 'flex',
+            flexDone: 4,
+            flexTarget: 5,
+            baseStreak: 14,
+            doneToday: true,
+            shieldedToday: false,
+            colorBg: 'rgba(14, 165, 233, 0.12)',
+            weekHistory: ['done', 'done', 'rest', 'done', 'done', 'rest', 'done']
+          },
+          {
+            id: 'h2',
+            titleEs: 'Hidratación Celular 2.5L',
+            titleEn: 'Cellular Hydration 2.5L',
+            emoji: '💧',
+            mode: 'daily',
+            flexDone: 6,
+            flexTarget: 7,
+            baseStreak: 21,
+            doneToday: false,
+            shieldedToday: false,
+            colorBg: 'rgba(16, 185, 129, 0.12)',
+            weekHistory: ['done', 'done', 'done', 'shield', 'done', 'done', 'pending']
+          },
+          {
+            id: 'h3',
+            titleEs: 'Entrenamiento de Fuerza & Movilidad',
+            titleEn: 'Strength & Mobility Training',
+            emoji: '🏋️',
+            mode: 'flex',
+            flexDone: 3,
+            flexTarget: 4,
+            baseStreak: 9,
+            doneToday: false,
+            shieldedToday: false,
+            colorBg: 'rgba(139, 92, 246, 0.12)',
+            weekHistory: ['done', 'rest', 'done', 'rest', 'done', 'rest', 'pending']
+          }
+        ]);
+
+        const demoHeatmap28 = [
+          'done', 'done', 'done', 'rest', 'done', 'done', 'done',
+          'done', 'shield', 'done', 'done', 'done', 'rest', 'done',
+          'done', 'done', 'done', 'done', 'rest', 'done', 'done',
+          'done', 'done', 'done', 'rest', 'done', 'done', 'today'
+        ];
+
+        const weekLabels = computed(() =>
+          lang.value === 'es'
+            ? ['L', 'M', 'X', 'J', 'V', 'S', 'HOY']
+            : ['M', 'T', 'W', 'T', 'F', 'S', 'NOW']
+        );
+
+        const demoCompletedCount = computed(() =>
+          demoHabits.value.filter(h => h.doneToday || h.shieldedToday).length
+        );
+
+        const demoCompletionPct = computed(() =>
+          Math.round((demoCompletedCount.value / demoHabits.value.length) * 100)
+        );
+
+        const demoShieldUsed = computed(() =>
+          demoHabits.value.some(h => h.shieldedToday)
+        );
+
+        function t(key) {
+          return (i18n[lang.value] && i18n[lang.value][key]) || i18n.es[key] || key;
+        }
+
+        function playTapSound() {
+          if (soundEnabled.value) audioFeedback.playTap();
+        }
+
+        function toggleDemoHabit(habit) {
+          habit.shieldedToday = false;
+          habit.doneToday = !habit.doneToday;
+          if (habit.doneToday) {
+            celebratingId.value = habit.id;
+            setTimeout(() => {
+              if (celebratingId.value === habit.id) celebratingId.value = null;
+            }, 260);
+            if (soundEnabled.value) audioFeedback.playTap();
+          }
+        }
+
+        function toggleDemoShield(habit) {
+          if (habit.doneToday) return;
+          habit.shieldedToday = !habit.shieldedToday;
+          if (habit.shieldedToday && soundEnabled.value) {
+            audioFeedback.playShield();
+          }
+        }
+
+        function getDemoMatrixClass(habit, st, isToday) {
+          if (isToday) {
+            if (habit.doneToday) return 'bg-brand-mint text-white shadow-glow-mint';
+            if (habit.shieldedToday) return 'bg-brand-sky text-white shadow-glow-sky';
+            return 'bg-brand-elevated border border-brand-sky text-brand-sky';
+          }
+          if (st === 'done') return 'bg-brand-mint/85 text-white';
+          if (st === 'shield') return 'bg-brand-sky/85 text-white';
+          return 'bg-brand-elevated text-brand-slate border border-brand-border';
+        }
+
+        function switchDemoTab(tab) {
+          demoTab.value = tab;
+          playTapSound();
+        }
+
+        function toggleDemoUnlimited() {
+          demoUnlimited.value = !demoUnlimited.value;
+          playTapSound();
+        }
+
+        function applyAccentColor(id) {
+          const found = availableAccents.find(a => a.id === id) || availableAccents[0];
+          activeAccent.value = found.id;
+          document.documentElement.style.setProperty('--brand-accent', found.hex);
+          document.documentElement.style.setProperty('--brand-accent-glow', found.glow);
+          playTapSound();
+        }
+
+        function toggleTheme() {
+          isDarkMode.value = !isDarkMode.value;
+          document.documentElement.classList.toggle('dark', isDarkMode.value);
+          playTapSound();
+        }
+
+        function toggleLanguage() {
+          lang.value = lang.value === 'es' ? 'en' : 'es';
+          document.documentElement.lang = lang.value;
+          playTapSound();
+        }
+
+        function toggleSound() {
+          soundEnabled.value = !soundEnabled.value;
+          if (soundEnabled.value) audioFeedback.playTap();
+        }
+
+        function setCapacityPreview(mode) {
+          selectedCapacityMode.value = mode;
+          playTapSound();
+        }
+
+        function togglePillarShield() {
+          pillarShieldActive.value = !pillarShieldActive.value;
+          if (soundEnabled.value) {
+            pillarShieldActive.value ? audioFeedback.playShield() : audioFeedback.playTap();
+          }
+        }
+
+        function toggleFaq(idx) {
+          openFaqIndex.value = openFaqIndex.value === idx ? -1 : idx;
+          playTapSound();
+        }
+
+        function handleCheckoutClick() {
+          playTapSound();
+        }
+
+        const currentOSSteps = computed(() => {
+          const steps = {
+            ios: {
+              es: [
+                { title: 'Abre en Safari', desc: 'Ingresa a tu enlace privado o archivo de Habit Paradigm desde Safari en tu iPhone o iPad.' },
+                { title: 'Toca Compartir ⎋', desc: 'Pulsa el ícono de Compartir en la barra inferior y selecciona "Añadir a pantalla de inicio".' },
+                { title: 'App Nativa Lista', desc: 'Ábrela desde tu inicio a pantalla completa, con soporte 100% offline y cero barras de navegador.' }
+              ],
+              en: [
+                { title: 'Open in Safari', desc: 'Open your private link or Habit Paradigm file in Safari on your iPhone or iPad.' },
+                { title: 'Tap Share ⎋', desc: 'Tap the Share icon on the bottom bar and choose "Add to Home Screen".' },
+                { title: 'Native App Ready', desc: 'Launch full-screen from your homescreen with 100% offline support.' }
+              ]
+            },
+            android: {
+              es: [
+                { title: 'Abre en Chrome', desc: 'Accede a Habit Paradigm desde Google Chrome en tu dispositivo Android.' },
+                { title: 'Pulsa "Instalar App"', desc: 'Toca el botón verde "Instalar App" en el encabezado o desde el menú de 3 puntos.' },
+                { title: 'Ejecución Instantánea', desc: 'Se integrará en tu cajón de aplicaciones como una app nativa ultraligera.' }
+              ],
+              en: [
+                { title: 'Open in Chrome', desc: 'Access Habit Paradigm in Google Chrome on your Android phone.' },
+                { title: 'Tap "Install App"', desc: 'Click the "Install App" button in the header or from the 3-dot browser menu.' },
+                { title: 'Instant Execution', desc: 'It installs directly into your app drawer with full offline persistence.' }
+              ]
+            },
+            desktop: {
+              es: [
+                { title: 'Abre en tu Navegador', desc: 'Compatible con Chrome, Edge, Brave y Safari en Mac o Windows.' },
+                { title: 'Anclar al Dock / Escritorio', desc: 'Haz clic en el ícono de instalación en la barra de direcciones para fijarla en tu Dock.' },
+                { title: 'Control por Teclado', desc: 'Usa [1-3] para marcar tus hábitos diarios en milisegundos y [T] para alternar el tema.' }
+              ],
+              en: [
+                { title: 'Open in Your Browser', desc: 'Works seamlessly in Chrome, Edge, Brave, and Safari on Mac or Windows.' },
+                { title: 'Pin to Dock / Desktop', desc: 'Click the install icon in the address bar to run it as a standalone desktop window.' },
+                { title: 'Keyboard Control', desc: 'Press [1-3] to check off daily habits in milliseconds and [T] to switch themes.' }
+              ]
+            }
+          };
+          return steps[selectedOS.value][lang.value];
+        });
+
+        const comparisonRows = computed(() =>
+          lang.value === 'es'
+            ? [
+                { feature: 'Modelo de Pago', us: 'Pago Único Vitalicio ($12 USD)', them: 'Suscripción ($59+/año)' },
+                { feature: 'Días Flexibles sin Culpa', us: 'Incluido (Modo Flex 2-6 días)', them: 'Rompe tu racha al descansar' },
+                { feature: 'Escudo contra Imprevistos', us: '1 Token Mensual de Emergencia', them: 'Castigo o cobro extra por recuperar' },
+                { feature: 'Límite de Carga Cognitiva', us: 'Estricto 3 + Desbloqueo Ilimitado ∞', them: 'Listas infinitas que agotan' },
+                { feature: 'Privacidad y Datos', us: '100% Local-First + Respaldo .JSON', them: 'Servidores en la nube + Rastreo' },
+                { feature: 'Funcionamiento sin Internet', us: '100% Offline (Service Worker PWA)', them: 'Requiere conexión constante' }
+              ]
+            : [
+                { feature: 'Pricing Model', us: 'One-Time Lifetime ($12 USD)', them: 'Subscription ($59+/year)' },
+                { feature: 'Guilt-Free Flex Days', us: 'Built-in (Flex Mode 2-6 days)', them: 'Breaks streak on rest days' },
+                { feature: 'Emergency Streak Shield', us: '1 Monthly Protection Token', them: 'Resets streak or charges extra' },
+                { feature: 'Cognitive Load Protection', us: 'Strict 3 + Unlimited Unlock ∞', them: 'Bloated lists that cause burnout' },
+                { feature: 'Data Privacy', us: '100% Local-First + .JSON Backup', them: 'Cloud lock-in + User tracking' },
+                { feature: 'Offline Availability', us: '100% Offline (Service Worker PWA)', them: 'Requires active connection' }
+              ]
+        );
+
+        const testimonials = [
+          {
+            name: 'Mateo Valdés',
+            initials: 'MV',
+            streak: '🔥 64 Días',
+            roleEs: 'Ingeniero de Software Senior',
+            roleEn: 'Senior Software Engineer',
+            quoteEs: 'Probé más de 10 apps de hábitos y todas me hacían abandonar cuando tenía una semana pesada de trabajo. El Modo Flex de 5 días y el Escudo Mensual cambiaron por completo mi constancia.',
+            quoteEn: 'I tried over 10 habit apps and quit all of them during heavy work weeks. The 5-day Flex Mode and Monthly Shield completely transformed my consistency.'
+          },
+          {
+            name: 'Sofía Alarcón',
+            initials: 'SA',
+            streak: '🔥 49 Días',
+            roleEs: 'Diseñadora de Producto & Atleta',
+            roleEn: 'Product Designer & Athlete',
+            quoteEs: 'La estética Obsidian y el sonido al marcar un hábito son adictivos en el buen sentido. Limitarme a 3 hábitos al inicio hizo que por fin cumpliera mi lectura e hidratación diaria.',
+            quoteEn: 'The Obsidian aesthetic and tactile sound on check-in feel incredible. Starting with the strict 3-habit rule finally made my daily reading and hydration stick.'
+          },
+          {
+            name: 'Daniel Rojas',
+            initials: 'DR',
+            streak: '🔥 82 Días',
+            roleEs: 'Fundador & Consultor',
+            roleEn: 'Founder & Consultant',
+            quoteEs: 'Que sea un pago único, sin cuentas en la nube y con exportación en JSON me dio total tranquilidad. La tengo instalada en mi iPhone y en mi MacBook.',
+            quoteEn: 'One-time payment, zero cloud accounts, and 1-click JSON backups gave me complete peace of mind. I run it daily on both my iPhone and MacBook.'
+          }
+        ];
+
+        const pricingIncludes = computed(() =>
+          lang.value === 'es'
+            ? [
+                'Aplicación completa Habit Paradigm Pro v2.6 (Web + Descargable)',
+                'Licencia Vitalicia oficial incluida (Desbloqueo permanente)',
+                'Modo Estricto (3 Hábitos) + Desbloqueo Multihábito Ilimitado (∞)',
+                'Motor de Hábitos Flexibles, Escudo Mensual y Analítica 28D',
+                '6 Colores de Acento, Modo Oscuro Obsidian / Claro y Audio Táctil',
+                'Guía interactiva paso a paso para iPhone, Android, Mac y Windows'
+              ]
+            : [
+                'Complete Habit Paradigm Pro v2.6 App (Web + Downloadable Suite)',
+                'Official Lifetime License Key included (Permanent unlock)',
+                'Strict 3-Habit Focus Mode + Unlimited Multi-Habit Unlock (∞)',
+                'Guilt-Free Flex Engine, Monthly Shield & 28D Analytics Matrix',
+                '6 Accent Tints, Obsidian Dark / Light Mode & Tactile Web Audio',
+                'Interactive setup guide for iPhone, Android, Mac, and Windows'
+              ]
+        );
+
+        const faqItems = computed(() =>
+          lang.value === 'es'
+            ? [
+                {
+                  q: '¿Realmente es un pago único sin suscripciones mensuales?',
+                  a: 'Sí, 100%. Adquieres la Edición Pro Vitalicia de Habit Paradigm con un único pago. No existen cobros recurrentes, ni funciones bloqueadas tras muros de pago mensuales.'
+                },
+                {
+                  q: '¿Cómo la instalo en mi iPhone, Android o Computadora?',
+                  a: 'Al adquirirla recibes acceso inmediato al enlace web privado y al paquete completo con el Manual de Bienvenida. En iPhone (Safari > Compartir > Añadir a pantalla de inicio) o Android (Chrome > Instalar App) queda instalada en menos de 10 segundos como una app nativa y funciona incluso en modo avión.'
+                },
+                {
+                  q: '¿Puedo agregar más de 3 hábitos si lo necesito?',
+                  a: '¡Por supuesto! Por defecto inicia con la Ley de Carga Cognitiva (3 hábitos) para maximizar tu adherencia inicial, pero desde Ajustes o con el botón rápido "Activar Multihábito" puedes ampliarla a 5 o a hábitos ilimitados (∞) en un solo clic.'
+                },
+                {
+                  q: '¿Dónde se guardan mis datos y cómo hago copias de seguridad?',
+                  a: 'Tus datos se guardan exclusivamente en la memoria protegida de tu dispositivo (arquitectura Local-First). Nadie más tiene acceso a ellos. En la pestaña Ajustes tienes el botón "Exportar Respaldo (.json)" para guardar o transferir tu historial cuando quieras.'
+                }
+              ]
+            : [
+                {
+                  q: 'Is it really a one-time payment with no subscriptions?',
+                  a: 'Yes, 100%. You get the Habit Paradigm Pro Lifetime Edition for a single one-time payment. Zero recurring fees, zero ads, and zero paywalls.'
+                },
+                {
+                  q: 'How do I install it on my iPhone, Android, or Computer?',
+                  a: 'Right after purchase you get instant access to the web app and downloadable package. On iPhone (Safari > Share > Add to Home Screen) or Android (Chrome > Install App) it installs in 10 seconds as a full-screen native-like app that works 100% offline.'
+                },
+                {
+                  q: 'Can I track more than 3 habits if I want to?',
+                  a: 'Absolutely! It defaults to the Cognitive Load Law (3 habits) to protect your focus, but you can unlock Extended (5) or Unlimited Multi-Habit Mode (∞) in a single click anytime.'
+                },
+                {
+                  q: 'Where is my data stored and how do backups work?',
+                  a: 'All data stays 100% inside your device’s encrypted local storage sandbox. In Settings, you can export or restore a lightweight .json backup file in one click whenever you switch devices.'
+                }
+              ]
+        );
+
+        onMounted(() => {
+          // Scroll Reveal IntersectionObserver (Fires once per section, Emil Kowalski style)
+          if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                  }
+                });
+              },
+              { threshold: 0.12, rootMargin: '0px 0px -50px 0px' }
+            );
+            document.querySelectorAll('.reveal-section').forEach((el) => observer.observe(el));
+          } else {
+            document.querySelectorAll('.reveal-section').forEach((el) => el.classList.add('is-visible'));
+          }
+
+          // Keyboard Shortcuts ([1-3] Toggle Demo Habits, [T] Theme, [L] Language)
+          window.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === '1' && demoHabits.value[0]) toggleDemoHabit(demoHabits.value[0]);
+            if (e.key === '2' && demoHabits.value[1]) toggleDemoHabit(demoHabits.value[1]);
+            if (e.key === '3' && demoHabits.value[2]) toggleDemoHabit(demoHabits.value[2]);
+            if (e.key.toLowerCase() === 't') toggleTheme();
+            if (e.key.toLowerCase() === 'l') toggleLanguage();
+          });
+        });
+
+        return {
+          lang,
+          isDarkMode,
+          soundEnabled,
+          activeAccent,
+          availableAccents,
+          demoTab,
+          demoUnlimited,
+          demoHabits,
+          demoHeatmap28,
+          weekLabels,
+          demoCompletedCount,
+          demoCompletionPct,
+          demoShieldUsed,
+          celebratingId,
+          selectedCapacityMode,
+          flexPreviewDays,
+          pillarShieldActive,
+          selectedOS,
+          currentOSSteps,
+          comparisonRows,
+          testimonials,
+          pricingIncludes,
+          faqItems,
+          openFaqIndex,
+          checkoutUrl,
+          t,
+          playTapSound,
+          toggleDemoHabit,
+          toggleDemoShield,
+          getDemoMatrixClass,
+          switchDemoTab,
+          toggleDemoUnlimited,
+          applyAccentColor,
+          toggleTheme,
+          toggleLanguage,
+          toggleSound,
+          setCapacityPreview,
+          togglePillarShield,
+          toggleFaq,
+          handleCheckoutClick
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
